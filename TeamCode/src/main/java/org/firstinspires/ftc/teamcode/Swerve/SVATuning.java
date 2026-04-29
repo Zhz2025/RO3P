@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
-import org.firstinspires.ftc.teamcode.utility.Line;
-import org.firstinspires.ftc.teamcode.utility.MathSolver;
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.Line;
+import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 
 import java.util.ArrayList;

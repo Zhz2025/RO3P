@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
-import org.firstinspires.ftc.teamcode.utility.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
 
 @TeleOp
 public class AngleSensorTester extends LinearOpMode {

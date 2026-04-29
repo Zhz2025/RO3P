@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.controllers;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.utility.LinearInterpolationTable;
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.LinearInterpolationTable;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 
 public class EnhancedAngleSensor extends AngleSensor{
     Point2D[] point2DS;

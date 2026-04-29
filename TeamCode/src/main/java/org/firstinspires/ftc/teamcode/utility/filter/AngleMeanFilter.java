@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.utility.filter;
 
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 
 /**
  * 使用Point2D实现的移动平均角度滤波器

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit;
 
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 
 public interface WheelUnit {
     public Point2D getPosition();

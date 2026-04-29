@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.VoltageOutTester;
+package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
-import org.firstinspires.ftc.teamcode.utility.Line;
-import org.firstinspires.ftc.teamcode.utility.MathSolver;
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.Line;
+import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 
@@ -30,6 +30,7 @@ import android.os.Environment;
 @TeleOp(name = "Motor SVA Tuning")
 public class MotorSVATuning extends LinearOpMode {
     private DcMotorEx motor;
+    private DcMotorEx follower;
     private FileWriter fileWriter;
     private String logFileName;
     private VoltageOut voltageOut;
@@ -68,18 +69,23 @@ public class MotorSVATuning extends LinearOpMode {
     public static double maxVariance = 1;
     public static double[] kA_TestVoltages = new double[]{1, 2, 3, 4, 5, 6};
     public static double voltageIncrement = 0.01; // For manual mode
-    public static String motorName = "SVA"; // Configurable motor name
 
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = InstanceTelemetry.init(telemetry);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        motor = hardwareMap.get(DcMotorEx.class, motorName);
+        motor = hardwareMap.get(DcMotorEx.class, "FlyWheelL");
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        follower = hardwareMap.get(DcMotorEx.class, "FlyWheelR");
+        follower.setDirection(DcMotorSimple.Direction.REVERSE);
+        follower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        follower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        follower.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         voltageOut = new VoltageOut(hardwareMap);
 
         // Initialize log file
@@ -205,7 +211,7 @@ public class MotorSVATuning extends LinearOpMode {
                     break;
             }
             motor.setPower(voltageOut.getVoltageOutPower(outputVoltage));
-
+            follower.setPower(voltageOut.getVoltageOutPower(outputVoltage));
             // Telemetry
             telemetry.addData("State", state);
             telemetry.addData("Output Voltage", outputVoltage);

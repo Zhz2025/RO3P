@@ -6,8 +6,8 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
-import org.firstinspires.ftc.teamcode.utility.MathSolver;
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 @Config
 public class RobotPosition {
     public static class Params {

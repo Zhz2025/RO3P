@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility;
+package org.firstinspires.ftc.teamcode.utility.Math;
 
 /**
  * 直线类，表示一条直线 y = slope * x + intercept

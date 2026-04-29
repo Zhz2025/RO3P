@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 
 @TeleOp(name = "ClearPosition", group = "TEST")
 public class ClearPosition extends LinearOpMode {

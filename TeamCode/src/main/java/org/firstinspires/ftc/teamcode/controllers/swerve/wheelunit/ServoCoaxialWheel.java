@@ -6,10 +6,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
-import org.firstinspires.ftc.teamcode.utility.SVAController;
-import org.firstinspires.ftc.teamcode.utility.MathSolver;
-import org.firstinspires.ftc.teamcode.utility.PIDController;
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 @Config
 public class ServoCoaxialWheel implements WheelUnit{

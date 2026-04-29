@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 
 public class ServoCoaxialWheelConfig {
     public double motorGearRatio;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utility;
+package org.firstinspires.ftc.teamcode.utility.Math;
 
 import com.acmerobotics.roadrunner.Pose2d;
 
