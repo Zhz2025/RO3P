@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
 import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
+import org.firstinspires.ftc.teamcode.utility.PIDSVA.SVAController;
 
 public class SimpleDifferentialWheel implements WheelUnit{
     public static class Params {
@@ -122,6 +123,12 @@ public class SimpleDifferentialWheel implements WheelUnit{
     public double getHeading() {
         return readWheelHeading;
     }
+
+    @Override
+    public double getVoltage() {
+        return 0;
+    }
+
     boolean firstGetHeading = true;
     long lastGetHeadingTime = System.nanoTime();
     public double getAngularVelocity(){

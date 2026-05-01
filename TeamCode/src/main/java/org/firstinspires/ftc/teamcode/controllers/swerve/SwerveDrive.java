@@ -58,6 +58,7 @@ import java.util.List;
 
 @Config
 public class SwerveDrive {
+    public static double tmpKS = 0;
     public static class Params{
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
@@ -133,6 +134,14 @@ public class SwerveDrive {
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private VoltageSensor voltageSensor;
+    //测试功能，临时。
+    public void resetSVA(){
+        leftFrontParams.withKS(tmpKS);
+        rightFrontParams.withKS(tmpKS);
+        leftBackParams.withKS(tmpKS);
+        rightBackParams.withKS(tmpKS);
+    }
+
     public SwerveDrive(HardwareMap hardwareMap, Pose2d initialPose){
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);

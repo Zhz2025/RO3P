@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
 import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
+import org.firstinspires.ftc.teamcode.utility.PIDSVA.SVAController;
 import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 @Config
 public class ServoCoaxialWheel implements WheelUnit{
@@ -91,6 +92,7 @@ public class ServoCoaxialWheel implements WheelUnit{
         motorSVA = new SVAController(PARAMS.kS,PARAMS.kV,PARAMS.kA);
     }
     private double targetSpeed=0;
+    private double targetVoltage = 0;
     @Override
     public void setSpeed(double speed) {
         inputMethod = InputMethod.SPEED_HEADING;
@@ -230,12 +232,17 @@ public class ServoCoaxialWheel implements WheelUnit{
         double motorTranslation = targetTranslation.getDistance() / config.wheelDiameter * 2 * config.turntableToWheelTimes * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
         double translationAcceleration = (motorTranslation-times*lastTranslation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower += K_kM * PARAMS.kM * translationAcceleration;
-        motor.setPower((svaPower + pidPower) / SwerveController.getVoltage());
+        targetVoltage = svaPower + pidPower;
+        motor.setPower((targetVoltage) / SwerveController.getVoltage());
         lastUpdateTime=System.nanoTime();
     }
     @Override
     public void stop(){
         motor.setPower(0);
         servo.setPosition(0.5);
+    }
+    @Override
+    public double getVoltage() {
+        return targetVoltage;
     }
 }

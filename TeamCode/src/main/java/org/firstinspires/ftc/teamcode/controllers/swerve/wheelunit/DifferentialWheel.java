@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
 import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
+import org.firstinspires.ftc.teamcode.utility.PIDSVA.SVAController;
 
 public class DifferentialWheel implements WheelUnit{
     public static class Params {
@@ -127,6 +128,11 @@ public class DifferentialWheel implements WheelUnit{
             case REVERSE:
                 return MathSolver.normalizeAngle(-angleSensor.getRadian()+config.zeroDegreeSensorValue);
         }
+        return 0;
+    }
+
+    @Override
+    public double getVoltage() {
         return 0;
     }
 
