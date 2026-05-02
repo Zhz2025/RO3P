@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.utility.Math.Line;
 import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
@@ -21,6 +23,8 @@ import java.util.List;
 public class SmartSwerveTuner extends LinearOpMode {
     public static double AccelerationThreshold = 1;
     public static double SpeedThreshold = 200;
+    public  static  double minVEL = 1;
+    public static double minOMEGA = 0.5;
     List<Point2D> point2Ds_SV_LF = new ArrayList<>();
     List<Point2D> point2Ds_SV_RF = new ArrayList<>();
     List<Point2D> point2Ds_SV_LB = new ArrayList<>();
@@ -42,6 +46,17 @@ public class SmartSwerveTuner extends LinearOpMode {
 
             Acceleration acceleration = imu.getLinearAcceleration();
             double currentAcceleration = Math.sqrt(acceleration.xAccel * acceleration.xAccel + acceleration.yAccel * acceleration.yAccel + acceleration.zAccel * acceleration.zAccel);
+            Velocity currentVelocity = imu.getVelocity();
+            double ABSvelocity = Math.sqrt(currentVelocity.xVeloc * currentVelocity.xVeloc + currentVelocity.yVeloc * currentVelocity.yVeloc + currentVelocity.zVeloc * currentVelocity.zVeloc);
+
+            AngularVelocity currentAngularVelocity = imu.getAngularVelocity();
+            double ABSOmega = Math.abs(currentAngularVelocity.xRotationRate);
+            telemetry.addData("currentVelocity", currentVelocity);
+            telemetry.addData("ABSvelocity", ABSvelocity);
+
+            telemetry.addData("currentAngularVelocity", currentAngularVelocity);
+            telemetry.addData("ABSOmega", ABSOmega);
+
             telemetry.addData("Current Acceleration", currentAcceleration);
             double lfSpeed = swerveDrive.swerveController.wheelUnits[0].getSpeed();
             double lfVoltage = swerveDrive.swerveController.wheelUnits[0].getVoltage();
@@ -59,7 +74,7 @@ public class SmartSwerveTuner extends LinearOpMode {
             telemetry.addData("leftBack Voltage", lbVoltage);
             telemetry.addData("rightBack Speed", rbSpeed);
             telemetry.addData("rightBack Voltage", rbVoltage);
-            if(currentAcceleration < AccelerationThreshold) {
+            if(currentAcceleration < AccelerationThreshold && (ABSvelocity> minVEL || ABSOmega > minOMEGA)) {
 
                 if(lfSpeed > SpeedThreshold) {
                     point2Ds_SV_LF.add(new Point2D(lfSpeed, lfVoltage));
@@ -82,6 +97,7 @@ public class SmartSwerveTuner extends LinearOpMode {
             }
 
             if(point2Ds_SV_LF.size() >= 2) {
+                telemetry.addData("count", point2Ds_SV_LB.size());
                 Line lineLF = MathSolver.fitLine(point2Ds_SV_LF);
                 telemetry.addData("leftFront kS", lineLF.getIntercept());
                 telemetry.addData("leftFront kV", lineLF.getSlope());
