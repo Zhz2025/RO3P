@@ -13,6 +13,8 @@ public class SlotConfig {
     public double kD = 0;
     /** 积分上限 */
     public double maxI = 1;
+    /** Izone 区域，误差小于该值才累加I */
+    public double iZone = Double.POSITIVE_INFINITY;
     /** 静态摩擦系数 */
     public double kS = 0;
     /** 速度系数 */
@@ -52,6 +54,13 @@ public class SlotConfig {
      */
     public SlotConfig withMaxI(double maxI) { this.maxI = maxI; return this; }
     
+    /**
+     * 设置Izone区域，误差小于该值才累加I
+     * @param iZone Izone阈值
+     * @return 当前SlotConfig实例，用于链式调用
+     */
+    public SlotConfig withIZone(double iZone) { this.iZone = iZone; return this; }
+
     /**
      * 设置静态摩擦系数
      * @param kS 静态摩擦系数

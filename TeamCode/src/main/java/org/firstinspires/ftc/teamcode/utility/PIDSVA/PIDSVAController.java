@@ -106,11 +106,15 @@ public class PIDSVAController {
         SlotConfig cfg = slots.get(currentSlot);
         // 计算误差
         double error = setpoint - measurement;
-        // 计算积分
-        integral += error * dt;
-        // 积分限幅
-        if (cfg != null && integral > cfg.maxI) integral = cfg.maxI;
-        if (cfg != null && integral < -cfg.maxI) integral = -cfg.maxI;
+        // 仅在误差小于Izone时才累加积分
+        if (cfg != null && Math.abs(error) < cfg.iZone) {
+            integral += error * dt;
+            // 积分限幅
+            if (integral > cfg.maxI) integral = cfg.maxI;
+            if (integral < -cfg.maxI) integral = -cfg.maxI;
+        } else {
+            integral = 0; // 误差超出Izone时不积分
+        }
         // 计算微分
         double derivative = (error - previousError) / dt;
         // 更新上一次误差

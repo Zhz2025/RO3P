@@ -17,6 +17,8 @@ public class PIDController {
     private double previousError;
     /** 积分上限 */
     private double maxI = 1;
+    /** Izone 区域，误差小于该值才累加I */
+    private double iZone = Double.POSITIVE_INFINITY;
     
     /**
      * 构造函数，初始化PID参数
@@ -54,13 +56,17 @@ public class PIDController {
     public double calculate(double setpoint, double measurement, double dt) {
         // 计算误差
         double error = setpoint - measurement;
-        // 计算积分
-        integral += error * dt;
-        // 积分限幅
-        if (integral > maxI) {
-            integral = maxI;
-        } else if (integral < -maxI) {
-            integral = -maxI;
+        // 仅在误差小于Izone时才累加积分
+        if (Math.abs(error) < iZone) {
+            integral += error * dt;
+            // 积分限幅
+            if (integral > maxI) {
+                integral = maxI;
+            } else if (integral < -maxI) {
+                integral = -maxI;
+            }
+        } else {
+            integral = 0; // 误差超出Izone时清零积分
         }
         // 计算微分
         double derivative = (error - previousError) / dt;
@@ -101,5 +107,21 @@ public class PIDController {
      */
     public void setMaxI(double maxI) {
         this.maxI = maxI;
+    }
+
+    /**
+     * 设置Izone区域，误差小于该值才累加I
+     * @param iZone Izone阈值
+     */
+    public void setIZone(double iZone) {
+        this.iZone = iZone;
+    }
+
+    /**
+     * 获取当前Izone阈值
+     * @return Izone阈值
+     */
+    public double getIZone() {
+        return iZone;
     }
 }
