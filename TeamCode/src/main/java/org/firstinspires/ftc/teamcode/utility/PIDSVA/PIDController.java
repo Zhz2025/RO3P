@@ -27,7 +27,7 @@ public class PIDController {
      * @param kD 微分系数
      */
     public PIDController(double kP, double kI, double kD) {
-        this(kP, kI, kD, 1);
+        this(kP, kI, kD, 1, Double.POSITIVE_INFINITY);
     }
     
     /**
@@ -36,12 +36,14 @@ public class PIDController {
      * @param kI 积分系数
      * @param kD 微分系数
      * @param maxI 积分上限
+     * @param iZone 误差进入该范围后再开始累加i
      */
-    public PIDController(double kP, double kI, double kD, double maxI) {
+    public PIDController(double kP, double kI, double kD, double maxI, double iZone) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
         this.maxI = maxI;
+        this.iZone = iZone;
         this.integral = 0;
         this.previousError = 0;
     }
