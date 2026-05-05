@@ -4,7 +4,10 @@ package org.firstinspires.ftc.teamcode.Library.Team4410;
 /**
  * 运动曲线生成器，用于FTC机器人平滑运动控制。
  * 支持梯形速度曲线（加速、巡航、减速），加速与减速阶段可以设置不同的最大加速度。
+ *  * 注意：位置、速度、加速度需使用同一单位体系。
+ *  * 例如位置用 ticks，速度用 ticks/s，加速度用 ticks/s^2，
  */
+
 public class MotionProfiler {
 
     // 用户设定的全局最大速度和最大加速度（正值，代表大小）
@@ -13,7 +16,6 @@ public class MotionProfiler {
     private final double maxDecel;   // 减速阶段最大加速度大小
 
     // 当前路径运行状态
-    private boolean isOver = true;
     private boolean isDone = false;
 
     // 当前路径的运动参数
@@ -71,7 +73,6 @@ public class MotionProfiler {
     public void init_new_profile(double startPos, double finalPos) {
         this.startPos = startPos;
         this.finalPos = finalPos;
-        isOver = false;
         isDone = false;
 
         distance = finalPos - startPos;
@@ -126,7 +127,6 @@ public class MotionProfiler {
      */
     public double motion_profile_pos(double currentDt) {
         if (currentDt >= tTotal) {
-            isOver = true;
             isDone = true;
             return finalPos;
         }
@@ -154,6 +154,7 @@ public class MotionProfiler {
      */
     public double motion_profile_vel(double currentDt) {
         if (currentDt >= tTotal) {
+            isDone = true;
             return 0.0;
         }
 
@@ -177,6 +178,7 @@ public class MotionProfiler {
      */
     public double motion_profile_accel(double currentDt) {
         if (currentDt >= tTotal) {
+            isDone = true;
             return 0.0;
         }
 
@@ -197,14 +199,6 @@ public class MotionProfiler {
      */
     public double getEntire_dt() {
         return tTotal;
-    }
-
-    /**
-     * 判断运动曲线是否已执行完毕（到达终点后保持）。
-     * @return true 表示已结束
-     */
-    public boolean isOver() {
-        return isOver;
     }
 
     /**
