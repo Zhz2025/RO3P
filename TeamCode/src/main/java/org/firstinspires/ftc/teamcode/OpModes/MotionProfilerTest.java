@@ -5,9 +5,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Library.Team4410.MotionProfiler;
+import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule;
 
 /**
  * 测试用 OpMode：在 FTC Dashboard 中可调参数，实时输出运动曲线的位置、速度、加速度。
@@ -23,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Library.Team4410.MotionProfiler;
  */
 @TeleOp(name = "Motion Profiler Test", group = "Test")
 public class MotionProfilerTest extends LinearOpMode {
+    DcMotorEx motor;
 
     // Dashboard 可调参数类：
     @Config
@@ -43,7 +48,10 @@ public class MotionProfilerTest extends LinearOpMode {
     public void runOpMode() {
         // 同时向 Driver Station 和 FTC Dashboard 发送 telemetry
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        motor = hardwareMap.get(DcMotorEx.class, "turret");
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // 运动曲线生成器（先使用默认参数，等待 start 后再第一次初始化）
         MotionProfiler profiler = new MotionProfiler(
                 ProfileConfig.maxVel,
@@ -102,6 +110,11 @@ public class MotionProfilerTest extends LinearOpMode {
             double currentDt = runtime.seconds() - profileStartTime;
             double targetPosition = profiler.motion_profile_pos(currentDt);
             double targetVelocity = profiler.motion_profile_vel(currentDt);
+            motor.setPower(targetVelocity);
+            telemetry.addData("pos in ticks", motor.getCurrentPosition());
+            telemetry.addData("pos in degree", TurretModule.tickToDegree(motor.getCurrentPosition()));
+            telemetry.addData("vel", motor.getVelocity());
+            telemetry.addData("current", motor.getCurrent(CurrentUnit.AMPS));
             double targetAccel = profiler.motion_profile_accel(currentDt);
 
             // ---------- 显示信息 ----------
@@ -123,11 +136,11 @@ public class MotionProfilerTest extends LinearOpMode {
             if (profiler.isDone()) {
                 // 可以主动将 needReInit 设为 true 以便下次参数变化时自动启动新曲线
                 // 这里为了方便观察，不做自动重新初始化，用户修改参数后会自动触发
-                needReInit = true;
+//                needReInit = true;
             }
 
             // 控制循环频率，避免占用过多 CPU
-            sleep(20);
+            sleep(10);
         }
     }
 }

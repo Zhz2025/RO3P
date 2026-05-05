@@ -69,11 +69,11 @@ public class TurretModule {
     }
 
     // 编码器tick转角度
-    private double tickToDegree(double tick) {
+    public static double tickToDegree(double tick) {
         return tick / DegreePerTick;
     }
     // 角度转编码器tick
-    private double degreeToTick(double degree) {
+    public static double degreeToTick(double degree) {
         return degree * DegreePerTick;
     }
 
