@@ -18,7 +18,7 @@ public class Shootertester extends LinearOpMode {
         while (opModeIsActive()) {
             // 测试不同速度
             if (gamepad1.aWasPressed()) {
-                flyWheelModule.setTargetSpeed(2000); // 高速
+                flyWheelModule.setTargetSpeed(1500); // 高速
             } else if (gamepad1.bWasPressed()) {
                 flyWheelModule.setTargetSpeed(1000); // 中高速
             } else if (gamepad1.yWasPressed()) {

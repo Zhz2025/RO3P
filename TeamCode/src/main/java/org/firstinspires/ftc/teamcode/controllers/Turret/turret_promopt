@@ -1,0 +1,22 @@
+完善这个炮台（turret）的update()。要求：1使用位置环-速度环双环控制。PIDSVA控制器在utility中。速度环用PIDSVA，位置环只要PI。位置环生成速度曲线（java/org/firstinspires/ftc/teamcode/Library/Team4410/MotionProfiler.java），叠加位置环的PI反馈、车自身旋转的角速度（从外部传入，已经有方法）补偿，发送给速度环执行。例如“// 1. “先知”的指令：从运动规划器获取理论目标速度
+double profileVelocity = motionProfiler.motion_profile_vel(currentTime);
+
+// 2. “纠错者”的指令：位置环根据当前角度和目标角度的误差，算出一个修正速度
+double positionError = targetAngle - currentAngle;
+double correctiveVelocity = positionPidController.calculate(positionError);
+// 注意：这里positionPidController通常只用P，或者PI，输出就是速度单位。
+
+// 3. 最终下达给速度环的命令，是两者之和！
+double finalVelocitySetpoint = profileVelocity + correctiveVelocity;”
+2：最短路径判断。参照这个“if (getPositionDegs() > 0 && ((angle + 360) % 360) > highLimit ) {
+            angle = angle - 360;
+        } else if (angle < lowLimit) {
+            angle = angle + 360;
+        } else if (getPositionDegs() > 0 && angle > lowLimit) {
+            angle = (angle + 360) % 360;
+        }
+        angle = Math.min(Math.max(lowLimit, angle), highLimit);
+        runToTargetAngle = angle;
+        int t = (int) ((angle) / degsPerTick);
+        runTo(t);”
+3：死区保护。update中直接读取encoder读数，强行限制在+-1500范围内作为最后一层保险
