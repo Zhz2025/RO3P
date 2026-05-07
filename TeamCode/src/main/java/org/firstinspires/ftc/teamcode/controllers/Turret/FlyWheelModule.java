@@ -16,7 +16,7 @@ public class FlyWheelModule {
     /**
      * 比例系数
      */
-    public static double kP = 1.0;
+    public static double kP = 0.02;
     /**
      * 积分系数
      */
@@ -32,11 +32,11 @@ public class FlyWheelModule {
     /**
      * 静态摩擦系数
      */
-    public static double kS = 0.0;
+    public static double kS = -1.35;
     /**
      * 速度系数
      */
-    public static double kV = 0.0;
+    public static double kV = 0.006522;
     /**
      * 加速度系数
      */
@@ -104,7 +104,7 @@ public class FlyWheelModule {
 
         this.motorL.setDirection(DcMotorEx.Direction.REVERSE);
 
-        this.motorR.setDirection(DcMotorEx.Direction.FORWARD);
+        this.motorR.setDirection(DcMotorEx.Direction.REVERSE);
 
         // 初始化电压输出控制器
         this.voltageOut = new VoltageOut(hardwareMap);
