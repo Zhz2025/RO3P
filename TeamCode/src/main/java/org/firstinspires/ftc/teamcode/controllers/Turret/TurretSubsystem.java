@@ -10,12 +10,12 @@ public class TurretSubsystem {
     private Velocity currentVelocity;
     private AngularVelocity currentAngularVelocity;
     private Telemetry myTelemetry;
-    public TurretModule turretModule;
+    public TurretModule_Simplified turretModule;
     public FlyWheelModule flyWheelModule;
     public BoardModule boardModule;
 
     public TurretSubsystem(HardwareMap hardwareMap, Telemetry telemetryRC){
-        turretModule = new TurretModule(hardwareMap,telemetryRC);
+        turretModule = new TurretModule_Simplified(hardwareMap,telemetryRC);
         flyWheelModule = new FlyWheelModule(hardwareMap,telemetryRC);
         boardModule = new BoardModule(hardwareMap,telemetryRC);
     }

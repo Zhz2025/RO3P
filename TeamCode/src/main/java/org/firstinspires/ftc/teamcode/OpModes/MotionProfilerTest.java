@@ -110,11 +110,11 @@ public class MotionProfilerTest extends LinearOpMode {
             double currentDt = runtime.seconds() - profileStartTime;
             double targetPosition = profiler.motion_profile_pos(currentDt);
             double targetVelocity = profiler.motion_profile_vel(currentDt);
-            motor.setPower(targetVelocity);
-            telemetry.addData("pos in ticks", motor.getCurrentPosition());
-            telemetry.addData("pos in degree", TurretModule.tickToDegree(motor.getCurrentPosition()));
-            telemetry.addData("vel", motor.getVelocity());
-            telemetry.addData("current", motor.getCurrent(CurrentUnit.AMPS));
+//            motor.setPower(targetVelocity);
+//            telemetry.addData("pos in ticks", motor.getCurrentPosition());
+//            telemetry.addData("pos in degree", TurretModule.tickToDegree(motor.getCurrentPosition()));
+//            telemetry.addData("vel", motor.getVelocity());
+//            telemetry.addData("current", motor.getCurrent(CurrentUnit.AMPS));
             double targetAccel = profiler.motion_profile_accel(currentDt);
 
             // ---------- 显示信息 ----------
