@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 
 @Config
-public class intakeController {
+public class IntakeController {
     public static class Params {
         double biteVoltage = 12.0;
         double swallowVoltage = 8.0;
@@ -16,7 +16,7 @@ public class intakeController {
 
     public static Params PARAMS = new Params();
 
-    public intakeController (HardwareMap hardwareMap, String deviceName){
+    public IntakeController(HardwareMap hardwareMap, String deviceName){
         this.intakeMotor=hardwareMap.get(DcMotorEx.class, deviceName);
         intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         voltageOut = new VoltageOut(hardwareMap);
@@ -35,7 +35,10 @@ public class intakeController {
      *
      */
     public enum IntakeState{
-        BITE, SWALLOW, SLEEP, OMIT
+        BITE, SWALLOW, SLEEP, OMIT;
+        public IntakeState next(){
+            return values()[(ordinal()+1)%values().length];
+        }
     }
     private IntakeState intakeState = IntakeState.SLEEP;
     public IntakeState getIntakeState(){
@@ -62,5 +65,8 @@ public class intakeController {
     }
     public void stop(){
         intakeMotor.setPower(0);
+    }
+    public DcMotorEx getIntakeMotor(){
+        return intakeMotor;
     }
 }
