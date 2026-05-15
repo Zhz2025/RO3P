@@ -63,6 +63,14 @@ public class TurretModule_Simplified {
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
+    public void setManualControl(){
+        manualControl = true;
+    }
+    public void setAutoControl(){
+        manualControl = false;
+    }
+
+
 
 
     // 外部设置车体角速度补偿
@@ -163,10 +171,7 @@ public class TurretModule_Simplified {
         else{
             targetDegree = bestTarget;
         }
-
-        // 运动规划器：路径未开始则需重新初始化
         long nowTime = System.currentTimeMillis();
-        double currentTime = (nowTime - profileStartTime) / 1000.0; // 秒
 
         //位置环PI控制（用PIDController实现）
         double dt;
