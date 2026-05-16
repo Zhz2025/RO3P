@@ -14,7 +14,7 @@ public class IntakeTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
-        intakeController = new IntakeController(hardwareMap,"intakeMotor");
+        intakeController = new IntakeController(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
             double current = intakeController.getIntakeMotor().getCurrent(CurrentUnit.AMPS);
