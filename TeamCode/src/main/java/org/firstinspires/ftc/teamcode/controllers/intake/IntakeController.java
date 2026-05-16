@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 @Config
 public class IntakeController {
     public static class Params {
-        double biteVoltage = 12.0;
-        double swallowVoltage = 8.0;
-        double omitVoltage = 6.0;
+        public double biteVoltage = 12.0;
+        public double swallowVoltage = 8.0;
+        public double omitVoltage = 6.0;
     }
 
     public static Params PARAMS = new Params();
