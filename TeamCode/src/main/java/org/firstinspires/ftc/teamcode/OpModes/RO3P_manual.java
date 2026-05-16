@@ -36,6 +36,8 @@ public class RO3P_manual extends LinearOpMode {
         myTurret.setTurretTurnLeftSupplier(() -> gamepad2.dpad_left);
 
         myIntake = new IntakeController(hardwareMap);
+
+        swerveDrive.swerveController.setAutoLockHeading(false);
         waitForStart();
         while(opModeIsActive()){
             //drivetrain
@@ -69,7 +71,7 @@ public class RO3P_manual extends LinearOpMode {
             }
 
             //turret
-            myTurret.update(0);
+            myTurret.update(RobotPosition.getInstance().getData().headingRadian);
             myIntake.update();
         }
     }
