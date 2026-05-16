@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 
 public class LocalizationTest extends LinearOpMode {
     @Override
@@ -88,7 +88,7 @@ public class LocalizationTest extends LinearOpMode {
 
                 drive.updatePoseEstimate();
 
-                Pose2d pose = RobotPosition.getInstance().getData().getPose2d();
+                Pose2d pose = Robot.getInstance().getData().getPose2d();
                 telemetry.addData("x", pose.position.x);
                 telemetry.addData("y", pose.position.y);
                 telemetry.addData("heading (deg)", Math.toDegrees(pose.heading.toDouble()));

@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 
@@ -49,7 +49,7 @@ public class IMUTester extends LinearOpMode {
         imu = lazyImu.get();
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
         swerveDrive.swerveController.setAutoLockHeading(false);
-        localizer = RobotPosition.getInstance().localizer;
+        localizer = Robot.getInstance().localizer;
         waitForStart();
         while (opModeIsActive()) {
             if(gamepad1.aWasReleased()) testMode = testMode.next();
@@ -81,8 +81,8 @@ public class IMUTester extends LinearOpMode {
                     FtcDashboard.getInstance().sendTelemetryPacket(packet);
                     break;
                 case RobotPosition:
-                    Point2D point2D = RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH);
-                    double heading = RobotPosition.getInstance().getData().headingRadian;
+                    Point2D point2D = Robot.getInstance().getData().getPosition(DistanceUnit.INCH);
+                    double heading = Robot.getInstance().getData().headingRadian;
                     telemetry.addData("heading",heading);
                     telemetry.addData("x",point2D.getX());
                     telemetry.addData("y",point2D.getY());

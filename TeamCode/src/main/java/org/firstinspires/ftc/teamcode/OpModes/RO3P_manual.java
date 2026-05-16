@@ -12,13 +12,11 @@ import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.Turret.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.controllers.intake.IntakeController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 import org.firstinspires.ftc.teamcode.controllers.trigger.DoorTriggerController;
 import org.firstinspires.ftc.teamcode.controllers.trigger.MultipleTriggerController;
 import org.firstinspires.ftc.teamcode.controllers.trigger.RotationTriggerController;
 import org.firstinspires.ftc.teamcode.controllers.trigger.TriggerController;
-
-import java.util.function.BooleanSupplier;
 
 public class RO3P_manual extends LinearOpMode {
 
@@ -94,7 +92,7 @@ public class RO3P_manual extends LinearOpMode {
             }
 
             //turret
-            myTurret.update(RobotPosition.getInstance().getData().headingRadian);
+            myTurret.update(Robot.getInstance().getData().headingRadian);
             myIntake.update();
             myTrigger.update();
         }
@@ -102,8 +100,8 @@ public class RO3P_manual extends LinearOpMode {
     public void telemetry(){
         telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
         telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
-        telemetry.addData("x,y", RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
-        telemetry.addData("heading", RobotPosition.getInstance().getData().headingRadian);
+        telemetry.addData("x,y", Robot.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
+        telemetry.addData("heading", Robot.getInstance().getData().headingRadian);
         telemetry.addData("targetHeading",swerveDrive.swerveController.getHeadingLockRadian());
         telemetry.addLine();
         telemetry.addData("IntakeState",myIntake.getIntakeState());
@@ -116,7 +114,7 @@ public class RO3P_manual extends LinearOpMode {
         telemetry.update();
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
-        Drawing.drawRobot(packet.fieldOverlay(), RobotPosition.getInstance().getData().getPose2d());
+        Drawing.drawRobot(packet.fieldOverlay(), Robot.getInstance().getData().getPose2d());
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
