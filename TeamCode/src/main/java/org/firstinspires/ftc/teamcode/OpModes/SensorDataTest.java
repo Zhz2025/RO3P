@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -17,7 +19,22 @@ public class SensorDataTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         VoltageSensor voltageSensor = hardwareMap.voltageSensor.iterator().next();
-        Localizer localizer = new PinpointLocalizer(hardwareMap, 0.00199, new Pose2d(0,0,0));
+        Localizer localizer = new Localizer() {
+            @Override
+            public void setPose(Pose2d pose) {
+
+            }
+
+            @Override
+            public Pose2d getPose() {
+                return new Pose2d(0,0,0);
+            }
+
+            @Override
+            public PoseVelocity2d update() {
+                return new PoseVelocity2d(new Vector2d(0,0), 0);
+            }
+        };
         Robot.refresh(localizer, voltageSensor);
         waitForStart();
         while (opModeIsActive()) {
