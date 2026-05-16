@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
@@ -12,6 +13,10 @@ import org.firstinspires.ftc.teamcode.controllers.Turret.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.controllers.intake.IntakeController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.trigger.DoorTriggerController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.MultipleTriggerController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.RotationTriggerController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.TriggerController;
 
 import java.util.function.BooleanSupplier;
 
@@ -20,6 +25,7 @@ public class RO3P_manual extends LinearOpMode {
     SwerveDrive swerveDrive;
     TurretSubsystem myTurret;
     IntakeController myIntake;
+    TriggerController myTrigger;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,6 +34,10 @@ public class RO3P_manual extends LinearOpMode {
         swerveDrive = new SwerveDrive(hardwareMap);
         myTurret = new TurretSubsystem(hardwareMap,telemetry);
         myTurret.toggleAutoAiming();
+        myTrigger = new MultipleTriggerController(
+                new RotationTriggerController(hardwareMap.get(ServoImplEx.class,"pushServo")),
+                new DoorTriggerController(hardwareMap.get(ServoImplEx.class,"triggerServo"))
+        );
 
         //绑定按键
         myTurret.setBoardUpSupplier(() -> gamepad2.dpad_up);
@@ -70,21 +80,39 @@ public class RO3P_manual extends LinearOpMode {
                 myIntake.setIntakeState(IntakeController.IntakeState.SWALLOW);
             }
 
+            switch (myIntake.getIntakeState()) {
+                case BITE:
+                case OMIT:
+                    myTrigger.setTriggerState(TriggerController.TriggerState.CLOSED);
+                    break;
+                case SWALLOW:
+                    myTrigger.setTriggerState(TriggerController.TriggerState.OPEN);
+                    break;
+                case SLEEP:
+                    myTrigger.setTriggerState(TriggerController.TriggerState.RESETTING);
+                    break;
+            }
+
             //turret
             myTurret.update(RobotPosition.getInstance().getData().headingRadian);
             myIntake.update();
+            myTrigger.update();
         }
     }
     public void telemetry(){
-        for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
-            telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
-            telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
-        }
         telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
         telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
         telemetry.addData("x,y", RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
         telemetry.addData("heading", RobotPosition.getInstance().getData().headingRadian);
         telemetry.addData("targetHeading",swerveDrive.swerveController.getHeadingLockRadian());
+        telemetry.addLine();
+        telemetry.addData("IntakeState",myIntake.getIntakeState());
+        telemetry.addData("TriggerState",myTrigger.getTriggerState());
+        telemetry.addLine();
+        for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
+            telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
+            telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
+        }
         telemetry.update();
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
