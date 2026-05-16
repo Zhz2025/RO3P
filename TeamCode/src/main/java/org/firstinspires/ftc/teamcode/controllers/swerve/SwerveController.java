@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
-import java.util.function.Supplier;
 @Config
 public class SwerveController {
     public SwerveController(SwerveDrive swerveDrive, Localizer localizer, VoltageSensor voltageSensor, WheelUnit... wheelUnits) {
@@ -87,7 +86,7 @@ public class SwerveController {
     }
 
     public void resetNoHeadModeStartError() {
-        resetNoHeadModeStartError(Robot.getInstance().getData().headingRadian);
+        resetNoHeadModeStartError(Robot.getInstance().getData_Position().headingRadian);
     }
 
     public void setHeadingLockRadian(double headingLockRadian) {
@@ -105,7 +104,7 @@ public class SwerveController {
         HeadingLockRadian = pose2d.heading.log();
         targetPoint = MathSolver.toPoint2D(pose2d);
         PARAMS.autoMode = AutoMode.ROADRUNNER;
-        TrajectoryActionBuilder actionBuilder = swerveDrive.actionBuilder(robot.getData().getPose2d())
+        TrajectoryActionBuilder actionBuilder = swerveDrive.actionBuilder(robot.getData_Position().getPose2d())
                 .strafeToLinearHeading(pose2d.position,pose2d.heading);
         actionRunner.clear();
         actionRunner.add(actionBuilder.build());
@@ -137,20 +136,20 @@ public class SwerveController {
                         break;
                     case PID:
                         if (targetPoint == null) {
-                            targetPoint = robot.getData().getPosition(DistanceUnit.MM);
+                            targetPoint = robot.getData_Position().getPosition(DistanceUnit.MM);
                         }
                         if (Double.isNaN(targetRadian)) {
                             if (HeadingLockRadianReset) {
-                                targetRadian = robot.getData().headingRadian;
+                                targetRadian = robot.getData_Position().headingRadian;
                             } else {
                                 targetRadian = HeadingLockRadian;
                             }
                         }
-                        double[] Vxy = chassisCalculator.calculatePIDXY(targetPoint, robot.getData().getPosition(DistanceUnit.MM));
-                        double VOmega = chassisCalculator.calculatePIDRadian(targetRadian, robot.getData().headingRadian);
+                        double[] Vxy = chassisCalculator.calculatePIDXY(targetPoint, robot.getData_Position().getPosition(DistanceUnit.MM));
+                        double VOmega = chassisCalculator.calculatePIDRadian(targetRadian, robot.getData_Position().headingRadian);
                         for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
                             WheelUnit wheelUnit = wheelUnits[i];
-                            chassisCalculator.solveGround(wheelUnit, Vxy, VOmega, robot.getData().headingRadian - noHeadModeStartError, i);
+                            chassisCalculator.solveGround(wheelUnit, Vxy, VOmega, robot.getData_Position().headingRadian - noHeadModeStartError, i);
                             wheelUnit.update();
                         }
                 }
@@ -164,18 +163,18 @@ public class SwerveController {
                     if (HeadingLockRadianReset) {
                         HeadingLockRadianReset = false;
                         chassisCalculator.firstRunRadian = true;
-                        HeadingLockRadian = robot.getData().headingRadian;
+                        HeadingLockRadian = robot.getData_Position().headingRadian;
                     }
-                    if (Math.abs(robot.getData().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
+                    if (Math.abs(robot.getData_Position().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
                         chassisCalculator.pidRadian.reset();
                     }
-                    omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robot.getData().headingRadian);
+                    omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robot.getData_Position().headingRadian);
                 }
             }
             for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
                 WheelUnit wheelUnit = wheelUnits[i];
                 if (useNoHeadMode)
-                    chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robot.getData().headingRadian - noHeadModeStartError,i);
+                    chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robot.getData_Position().headingRadian - noHeadModeStartError,i);
                 else
                     chassisCalculator.solveChassis(wheelUnit, vx, vy, omega,i);
                 wheelUnit.update();
@@ -192,18 +191,18 @@ public class SwerveController {
                 if (HeadingLockRadianReset) {
                     HeadingLockRadianReset = false;
                     chassisCalculator.firstRunRadian = true;
-                    HeadingLockRadian = robot.getData().headingRadian;
+                    HeadingLockRadian = robot.getData_Position().headingRadian;
                 }
-                if (Math.abs(robot.getData().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
+                if (Math.abs(robot.getData_Position().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
                     chassisCalculator.pidRadian.reset();
                 }
-                omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robot.getData().headingRadian);
+                omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robot.getData_Position().headingRadian);
             }
         }
         for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
             WheelUnit wheelUnit = wheelUnits[i];
             if (useNoHeadMode)
-                chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robot.getData().headingRadian - noHeadModeStartError,i);
+                chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robot.getData_Position().headingRadian - noHeadModeStartError,i);
             else
                 chassisCalculator.solveChassis(wheelUnit, vx, vy, omega,i);
             wheelUnit.update();

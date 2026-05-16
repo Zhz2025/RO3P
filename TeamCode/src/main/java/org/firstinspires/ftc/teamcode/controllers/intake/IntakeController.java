@@ -19,7 +19,7 @@ public class IntakeController {
     public IntakeController(HardwareMap hardwareMap){
         this.intakeMotor=hardwareMap.get(DcMotorEx.class, "intakeMotor");
         intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        voltageOut = new VoltageOut(hardwareMap);
+        voltageOut = new VoltageOut();
     }
     DcMotorEx intakeMotor;
     private VoltageOut voltageOut;

@@ -189,13 +189,13 @@ public class SwerveDrive {
     }
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = Robot.getInstance().localizer.update();
-        poseHistory.add(Robot.getInstance().getData().getPose2d());
+        poseHistory.add(Robot.getInstance().getData_Position().getPose2d());
 
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
-        estimatedPoseWriter.write(new PoseMessage(Robot.getInstance().getData().getPose2d()));
+        estimatedPoseWriter.write(new PoseMessage(Robot.getInstance().getData_Position().getPose2d()));
 
 
         return vel;
@@ -317,7 +317,7 @@ public class SwerveDrive {
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
             )
-                    .compute(txWorldTarget, Robot.getInstance().getData().getPose2d(), robotVelRobot);
+                    .compute(txWorldTarget, Robot.getInstance().getData_Position().getPose2d(), robotVelRobot);
             //driveCommandWriter.write(new DriveCommandMessage(command));
 
 
@@ -325,11 +325,11 @@ public class SwerveDrive {
 
             swerveController.autoInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
 
-            p.put("x", Robot.getInstance().getData().getPose2d().position.x);
-            p.put("y", Robot.getInstance().getData().getPose2d().position.y);
-            p.put("heading (deg)", Math.toDegrees(Robot.getInstance().getData().getPose2d().heading.toDouble()));
+            p.put("x", Robot.getInstance().getData_Position().getPose2d().position.x);
+            p.put("y", Robot.getInstance().getData_Position().getPose2d().position.y);
+            p.put("heading (deg)", Math.toDegrees(Robot.getInstance().getData_Position().getPose2d().heading.toDouble()));
 
-            Pose2d error = txWorldTarget.value().minusExp(Robot.getInstance().getData().getPose2d());
+            Pose2d error = txWorldTarget.value().minusExp(Robot.getInstance().getData_Position().getPose2d());
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
@@ -342,7 +342,7 @@ public class SwerveDrive {
             Drawing.drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, Robot.getInstance().getData().getPose2d());
+            Drawing.drawRobot(c, Robot.getInstance().getData_Position().getPose2d());
 
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
@@ -402,7 +402,7 @@ public class SwerveDrive {
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
             )
-                    .compute(txWorldTarget, Robot.getInstance().getData().getPose2d(), robotVelRobot);
+                    .compute(txWorldTarget, Robot.getInstance().getData_Position().getPose2d(), robotVelRobot);
 
             swerveController.autoInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
 
@@ -413,7 +413,7 @@ public class SwerveDrive {
             Drawing.drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, Robot.getInstance().getData().getPose2d());
+            Drawing.drawRobot(c, Robot.getInstance().getData_Position().getPose2d());
 
             c.setStroke("#7C4DFFFF");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);

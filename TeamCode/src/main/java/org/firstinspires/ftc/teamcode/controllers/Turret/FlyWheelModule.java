@@ -107,7 +107,7 @@ public class FlyWheelModule {
         this.motorR.setDirection(DcMotorEx.Direction.FORWARD);
 
         // 初始化电压输出控制器
-        this.voltageOut = new VoltageOut(hardwareMap);
+        this.voltageOut = new VoltageOut();
 
         // 初始化控制器配置
         this.config = new SlotConfig()

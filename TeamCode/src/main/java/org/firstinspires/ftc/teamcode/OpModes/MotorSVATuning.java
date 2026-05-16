@@ -86,7 +86,7 @@ public class MotorSVATuning extends LinearOpMode {
         follower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         follower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         follower.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        voltageOut = new VoltageOut(hardwareMap);
+        voltageOut = new VoltageOut();
 
         // Initialize log file
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);

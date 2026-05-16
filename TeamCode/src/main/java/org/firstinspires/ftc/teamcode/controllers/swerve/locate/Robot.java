@@ -22,7 +22,7 @@ public class Robot {
     private static Robot instance;
     public static Robot getInstance(){
         if(instance==null){
-            throw new IllegalStateException("RobotPosition not initialized, call setInstance first");
+            throw new IllegalStateException("Robot not initialized, call setInstance first");
         }
         return instance;
     }
@@ -68,8 +68,12 @@ public class Robot {
         Data_Voltage.instance.setVoltage(voltageSensor.getVoltage());
         lastUpdateTime=System.currentTimeMillis();
     }
-    public Data_Position getData(){
+    public Data_Position getData_Position(){
         update();
         return Data_Position.instance;
+    }
+    public Data_Voltage getData_Voltage(){
+        update();
+        return Data_Voltage.instance;
     }
 }

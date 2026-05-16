@@ -81,8 +81,8 @@ public class IMUTester extends LinearOpMode {
                     FtcDashboard.getInstance().sendTelemetryPacket(packet);
                     break;
                 case RobotPosition:
-                    Point2D point2D = Robot.getInstance().getData().getPosition(DistanceUnit.INCH);
-                    double heading = Robot.getInstance().getData().headingRadian;
+                    Point2D point2D = Robot.getInstance().getData_Position().getPosition(DistanceUnit.INCH);
+                    double heading = Robot.getInstance().getData_Position().headingRadian;
                     telemetry.addData("heading",heading);
                     telemetry.addData("x",point2D.getX());
                     telemetry.addData("y",point2D.getY());

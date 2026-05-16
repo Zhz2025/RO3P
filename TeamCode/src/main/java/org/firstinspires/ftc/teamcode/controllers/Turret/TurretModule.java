@@ -87,7 +87,7 @@ public class TurretModule {
         turretMotor.setDirection(DcMotorEx.Direction.FORWARD);
         myTelemetry = telemetryRC;
 
-        myVoltageOut = new VoltageOut(hardwareMap);
+        myVoltageOut = new VoltageOut();
 
         targetDegree = 0;
         currentTick = 0;
