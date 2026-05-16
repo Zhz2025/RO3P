@@ -136,6 +136,7 @@ public class DifferentialWheel implements WheelUnit{
         return 0;
     }
 
+    @Override
     public double getAngularVelocity(){
         return ((motor1.getVelocity()/28*2*Math.PI)/config.motor1GearRatio/config.motor1ToTurntableTimes+(motor2.getVelocity()/28*2*Math.PI)/config.motor2GearRatio/config.motor2ToTurntableTimes)/2;
     }

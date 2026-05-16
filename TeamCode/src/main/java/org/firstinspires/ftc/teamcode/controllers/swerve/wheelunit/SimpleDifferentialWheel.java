@@ -42,7 +42,8 @@ public class SimpleDifferentialWheel implements WheelUnit{
     DcMotorEx motor2;
     PIDController anglPID;
     PIDController motor1PID;
-    SVAController motorSVA;
+    SVAController motor1SVA;
+    SVAController motor2SVA;
     public SimpleDifferentialWheel (SimpleDifferentialWheelConfig config, DcMotorEx motor1, DcMotorEx motor2, double startWheelHeading){
         this.motor1=motor1;
         this.motor2=motor2;
@@ -52,7 +53,8 @@ public class SimpleDifferentialWheel implements WheelUnit{
         this.readWheelHeading = startWheelHeading;
         anglPID = new PIDController(PARAMS.sp, PARAMS.si, PARAMS.sd);
         motor1PID = new PIDController(PARAMS.mp, PARAMS.mi, PARAMS.md);
-        motorSVA = new SVAController(PARAMS.kS,PARAMS.kV,PARAMS.kA);
+        motor1SVA = new SVAController(PARAMS.kS,PARAMS.kV,PARAMS.kA);
+        motor2SVA = new SVAController(PARAMS.kS,PARAMS.kV,PARAMS.kA);
     }
     public SimpleDifferentialWheel setPARAMS(Params params){
         PARAMS = params;
@@ -121,6 +123,7 @@ public class SimpleDifferentialWheel implements WheelUnit{
 
     @Override
     public double getHeading() {
+        getAngularVelocity();
         return readWheelHeading;
     }
 
@@ -131,6 +134,7 @@ public class SimpleDifferentialWheel implements WheelUnit{
 
     boolean firstGetHeading = true;
     long lastGetHeadingTime = System.nanoTime();
+    @Override
     public double getAngularVelocity(){
         double angularVelocity = ((motor1.getVelocity() / 28 * 2 * Math.PI) / config.motor1GearRatio / config.motor1ToTurntableTimes + (motor2.getVelocity() / 28 * 2 * Math.PI) / config.motor2GearRatio / config.motor2ToTurntableTimes) / 2;
         if(firstGetHeading){
@@ -190,7 +194,8 @@ public class SimpleDifferentialWheel implements WheelUnit{
         }
         anglPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
         motor1PID.setPID(PARAMS.mp, PARAMS.mi, PARAMS.md);
-        motorSVA.setSVA(PARAMS.kS, PARAMS.kV, PARAMS.kA);
+        motor1SVA.setSVA(PARAMS.kS, PARAMS.kV, PARAMS.kA);
+        motor2SVA.setSVA(PARAMS.kS, PARAMS.kV, PARAMS.kA);
         double calculatedSpeed;
         Point2D calculatedTargetHeading;
         if (targetSpeed != 0) {
@@ -217,7 +222,7 @@ public class SimpleDifferentialWheel implements WheelUnit{
         double pidPower1 = motor1PID.calculate(targetVelocity1, motor1.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
         double pidPower2 = motor1PID.calculate(targetVelocity2, motor2.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
 
-        double svaPower1 = motorSVA.calculate(targetVelocity1, K_kA*(targetVelocity1 - motor1.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
+        double svaPower1 = motor1SVA.calculate(targetVelocity1, K_kA*(targetVelocity1 - motor1.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
         double times1 = motor1.getVelocity()/Point2D.translate(lastTranslation,lastRotation).getDistance();
         double rotationAcceleration1 = (targetRotation.getDistance()-times1*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower1 += K_kJ * PARAMS.kJ * rotationAcceleration1;
@@ -225,7 +230,7 @@ public class SimpleDifferentialWheel implements WheelUnit{
         svaPower1 += K_kM * PARAMS.kM * translationAcceleration1;
         motor1.setPower((svaPower1 + pidPower1) / SwerveController.getVoltage());
 
-        double svaPower2 = motorSVA.calculate(targetVelocity2, K_kA*(targetVelocity2 - motor2.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
+        double svaPower2 = motor2SVA.calculate(targetVelocity2, K_kA*(targetVelocity2 - motor2.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
         double times2 = motor2.getVelocity()/Point2D.translate(lastTranslation,lastRotation).getDistance();
         double rotationAcceleration2 = (targetRotation.getDistance()-times2*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower2 += K_kJ * PARAMS.kJ * rotationAcceleration2;
@@ -240,4 +245,19 @@ public class SimpleDifferentialWheel implements WheelUnit{
         motor1.setPower(0);
         motor2.setPower(0);
     }
+
+    // 辅助方法：用于 DualSVATuning 对单个电机进行整定
+    public double getMotor1Velocity() {
+        return motor1.getVelocity();
+    }
+
+    public double getMotor2Velocity() {
+        return motor2.getVelocity();
+    }
+
+    public void setRawMotorPowers(double power1, double power2) {
+        motor1.setPower(power1);
+        motor2.setPower(power2);
+    }
 }
+
