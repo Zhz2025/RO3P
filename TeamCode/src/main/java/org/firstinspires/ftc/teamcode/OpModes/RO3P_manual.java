@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -18,7 +20,12 @@ import org.firstinspires.ftc.teamcode.controllers.trigger.MultipleTriggerControl
 import org.firstinspires.ftc.teamcode.controllers.trigger.RotationTriggerController;
 import org.firstinspires.ftc.teamcode.controllers.trigger.TriggerController;
 
+@Config
+@TeleOp
 public class RO3P_manual extends LinearOpMode {
+    public static int Fly_Low = 1500;
+    public static int Fly_High = 1800;
+    public static int Idle = 0;
 
     SwerveDrive swerveDrive;
     TurretSubsystem myTurret;
@@ -71,25 +78,33 @@ public class RO3P_manual extends LinearOpMode {
 
             if(gamepad1.left_trigger > 0.5){
                 //shoot
+                myTurret.setManualTargetSpeed(Fly_Low);
                 myIntake.setIntakeState(IntakeController.IntakeState.SWALLOW);
+                myTrigger.setTriggerState(TriggerController.TriggerState.OPEN);
             }
-            if(gamepad1.right_trigger > 0.5){
+            else if(gamepad1.right_trigger > 0.5){
                 //shoot harder
+                myTurret.setManualTargetSpeed(Fly_High);
                 myIntake.setIntakeState(IntakeController.IntakeState.SWALLOW);
+                myTrigger.setTriggerState(TriggerController.TriggerState.OPEN);
+            }
+            else{
+                myTurret.setManualTargetSpeed(Idle);
+                myTrigger.setTriggerState(TriggerController.TriggerState.CLOSED);
             }
 
-            switch (myIntake.getIntakeState()) {
-                case BITE:
-                case OMIT:
-                    myTrigger.setTriggerState(TriggerController.TriggerState.CLOSED);
-                    break;
-                case SWALLOW:
-                    myTrigger.setTriggerState(TriggerController.TriggerState.OPEN);
-                    break;
-                case SLEEP:
-                    myTrigger.setTriggerState(TriggerController.TriggerState.RESETTING);
-                    break;
-            }
+//            switch (myIntake.getIntakeState()) {
+//                case BITE:
+//                case OMIT:
+//                    myTrigger.setTriggerState(TriggerController.TriggerState.CLOSED);
+//                    break;
+//                case SWALLOW:
+//                    myTrigger.setTriggerState(TriggerController.TriggerState.OPEN);
+//                    break;
+//                case SLEEP:
+//                    myTrigger.setTriggerState(TriggerController.TriggerState.RESETTING);
+//                    break;
+//            }
 
             //turret
             myTurret.update(Robot.getInstance().getData_Position().headingRadian);

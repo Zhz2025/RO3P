@@ -24,6 +24,8 @@ public class TurretSubsystem {
         static double[] Speed = {0,2000}; //tick/s
         static double ManualPower = 1; // 手动控制炮台的功率
     }
+
+    int manualTargetpeed = 0;
     
     LinearInterpolation disToSpeed = new LinearInterpolation(Params.Dis, Params.Speed);
     
@@ -148,12 +150,14 @@ public class TurretSubsystem {
                 // 如果都没按，停止炮台
                 turretModule.setMotorPower(0);
             }
+            flyWheelModule.setTargetSpeed(manualTargetpeed);
         }
 
         turretModule.update();
         flyWheelModule.update();
         boardModule.update();
-
+        myTelemetry.addData("Manual?", UsingAutoAiming);
+        myTelemetry.addData("TurretTurnRightSupplier", TurretTurnRight.getAsBoolean());
     }
 
     // 手动控制：挡板高位
@@ -177,4 +181,9 @@ public class TurretSubsystem {
         turretModule.setManualControl();
         turretModule.setMotorPower(-Params.ManualPower);
     }
+
+    public void setManualTargetSpeed(int speed){
+        manualTargetpeed = speed;
+    }
+
 }
