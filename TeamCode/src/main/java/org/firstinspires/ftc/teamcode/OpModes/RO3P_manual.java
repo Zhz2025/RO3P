@@ -87,7 +87,7 @@ public class RO3P_manual extends LinearOpMode {
                     myTrigger.setTriggerState(TriggerController.TriggerState.OPEN);
                     break;
                 case SLEEP:
-                    myTrigger.setTriggerState(TriggerController.TriggerState.RESETTING);
+                    myTrigger.setTriggerState(TriggerController.TriggerState.RESTING);
                     break;
             }
 

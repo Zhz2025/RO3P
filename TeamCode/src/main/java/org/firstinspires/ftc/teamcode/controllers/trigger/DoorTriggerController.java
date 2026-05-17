@@ -14,7 +14,7 @@ public class DoorTriggerController implements TriggerController{
     public DoorTriggerController(ServoImplEx triggerServo){
         this.triggerServo = triggerServo;
     }
-    private TriggerState triggerState = TriggerState.RESETTING;
+    private TriggerState triggerState = TriggerState.RESTING;
     @Override
     public void setTriggerState(TriggerState triggerState) {
         this.triggerState = triggerState;
@@ -34,7 +34,7 @@ public class DoorTriggerController implements TriggerController{
                 if(!triggerServo.isPwmEnabled()) triggerServo.setPwmEnable();
                 triggerServo.setPosition(PARAMS.CLOSED_POS);
                 break;
-            case RESETTING:
+            case RESTING:
                 if(triggerServo.isPwmEnabled())
                     triggerServo.setPwmDisable();
                 break;

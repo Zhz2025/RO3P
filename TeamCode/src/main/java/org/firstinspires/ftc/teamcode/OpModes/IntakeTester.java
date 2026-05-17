@@ -2,19 +2,29 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.controllers.intake.IntakeController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.DoorTriggerController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.MultipleTriggerController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.RotationTriggerController;
+import org.firstinspires.ftc.teamcode.controllers.trigger.TriggerController;
 
 @TeleOp(name = "IntakeTester",group = "Test")
 public class IntakeTester extends LinearOpMode {
     IntakeController intakeController;
+    TriggerController triggerModule;
     VoltageSensor voltageSensor;
     @Override
     public void runOpMode() throws InterruptedException {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
         intakeController = new IntakeController(hardwareMap);
+        triggerModule = new MultipleTriggerController(
+                new RotationTriggerController(hardwareMap.get(ServoImplEx.class,"pushServo")),
+                new DoorTriggerController(hardwareMap.get(ServoImplEx.class,"triggerServo"))
+        );
         waitForStart();
         while(opModeIsActive()){
             double current = intakeController.getIntakeMotor().getCurrent(CurrentUnit.AMPS);
@@ -41,6 +51,14 @@ public class IntakeTester extends LinearOpMode {
                 intakeController.setIntakeState(IntakeController.IntakeState.OMIT);
             }
             intakeController.update();
+            if(gamepad1.xWasPressed()){
+                triggerModule.setTriggerState(TriggerController.TriggerState.OPEN);
+            }else if(gamepad1.yWasPressed()) {
+                triggerModule.setTriggerState(TriggerController.TriggerState.CLOSED);
+            }else if(gamepad1.bWasPressed()){
+                triggerModule.setTriggerState(TriggerController.TriggerState.RESTING);
+            }
+            triggerModule.update();
         }
     }
 }
