@@ -92,7 +92,6 @@ public class RO3P_manual extends LinearOpMode {
                 myTurret.setManualTargetSpeed(Idle);
                 myTrigger.setTriggerState(TriggerController.TriggerState.CLOSED);
             }
-
 //            switch (myIntake.getIntakeState()) {
 //                case BITE:
 //                case OMIT:

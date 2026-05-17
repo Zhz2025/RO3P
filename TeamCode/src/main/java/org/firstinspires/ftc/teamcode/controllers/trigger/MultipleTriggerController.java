@@ -5,7 +5,7 @@ public class MultipleTriggerController implements TriggerController{
     public MultipleTriggerController(TriggerController... triggerControllers){
         this.triggerControllers = triggerControllers;
     }
-    TriggerState triggerState = TriggerState.RESETTING;
+    TriggerState triggerState = TriggerState.RESTING;
     @Override
     public void setTriggerState(TriggerState state) {
         triggerState =state;

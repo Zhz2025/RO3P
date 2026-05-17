@@ -14,7 +14,7 @@ public class RotationTriggerController implements TriggerController{
     public RotationTriggerController(ServoImplEx triggerServo){
         this.triggerServo = triggerServo;
     }
-    private TriggerState triggerState = TriggerState.RESETTING;
+    private TriggerState triggerState = TriggerState.RESTING;
     @Override
     public void setTriggerState(TriggerState triggerState) {
         this.triggerState = triggerState;
@@ -32,7 +32,7 @@ public class RotationTriggerController implements TriggerController{
             case CLOSED:
                 triggerServo.setPosition(PARAMS.CLOSED_POWER);
                 break;
-            case RESETTING:
+            case RESTING:
                 triggerServo.setPosition(0.5);
                 break;
         }
