@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.controllers.Turret;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -70,6 +72,7 @@ public class TurretSubsystem {
     private double currentBearingToGoal = 0;
 
     public TurretSubsystem(HardwareMap hardwareMap, Telemetry telemetryRC){
+        myTelemetry = telemetryRC;
         turretModule = new TurretModule_Simplified(hardwareMap,telemetryRC);
         flyWheelModule = new FlyWheelModule(hardwareMap,telemetryRC);
         boardModule = new BoardModule(hardwareMap,telemetryRC);
@@ -84,9 +87,9 @@ public class TurretSubsystem {
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        //builder.setCameraResolution(new Size(640, 480));
+        builder.setCameraResolution(new Size(640, 480));
 
-        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
 
         builder.addProcessor(aprilTag);
 

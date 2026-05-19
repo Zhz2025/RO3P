@@ -31,6 +31,7 @@ public class RO3P_manual extends LinearOpMode {
     TurretSubsystem myTurret;
     IntakeController myIntake;
     TriggerController myTrigger;
+    long currentMillisecond;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,15 +46,16 @@ public class RO3P_manual extends LinearOpMode {
         );
 
         //绑定按键
-        myTurret.setBoardUpSupplier(() -> gamepad2.dpad_up);
-        myTurret.setBoardDownSupplier(() -> gamepad2.dpad_down);
-        myTurret.setTurretTurnRightSupplier(() -> gamepad2.dpad_right);
-        myTurret.setTurretTurnLeftSupplier(() -> gamepad2.dpad_left);
+        myTurret.setBoardUpSupplier(() -> gamepad1.dpad_up);
+        myTurret.setBoardDownSupplier(() -> gamepad1.dpad_down);
+        myTurret.setTurretTurnRightSupplier(() -> gamepad1.dpad_right);
+        myTurret.setTurretTurnLeftSupplier(() -> gamepad1.dpad_left);
 
         myIntake = new IntakeController(hardwareMap);
 
         swerveDrive.swerveController.setAutoLockHeading(false);
         waitForStart();
+        long currentMillisecond = System.currentTimeMillis();
         while(opModeIsActive()){
             //drivetrain
             swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
@@ -109,9 +111,11 @@ public class RO3P_manual extends LinearOpMode {
             myTurret.update(Robot.getInstance().getData_Position().headingRadian);
             myIntake.update();
             myTrigger.update();
+            telemetry();
         }
     }
     public void telemetry(){
+
         telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
         telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
         telemetry.addData("x,y", Robot.getInstance().getData_Position().getPosition(DistanceUnit.INCH).toString());
@@ -125,6 +129,8 @@ public class RO3P_manual extends LinearOpMode {
             telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
             telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
         }
+        telemetry.addData("frame", System.currentTimeMillis() - currentMillisecond);
+        currentMillisecond = System.currentTimeMillis();
         telemetry.update();
         TelemetryPacket packet = new TelemetryPacket();
         packet.fieldOverlay().setStroke("#3F51B5");
