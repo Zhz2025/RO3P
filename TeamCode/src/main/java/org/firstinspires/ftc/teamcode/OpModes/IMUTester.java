@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
@@ -18,8 +19,8 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
-import org.firstinspires.ftc.teamcode.utility.MathSolver;
-import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
+import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 
 @Config
 @TeleOp(name = "IMU_Tester",group = "Test")
@@ -59,9 +60,9 @@ public class IMUTester extends LinearOpMode {
             switch (testMode) {
                 case IMU:
                     YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-                    telemetry.addData("heading", angles.getYaw());
-                    telemetry.addData("pitch", angles.getPitch());
-                    telemetry.addData("roll", angles.getRoll());
+                    telemetry.addData("heading", angles.getYaw(AngleUnit.RADIANS));
+                    telemetry.addData("pitch", angles.getPitch(AngleUnit.RADIANS));
+                    telemetry.addData("roll", angles.getRoll(AngleUnit.RADIANS));
                     if(gamepad1.bWasReleased()) imu.resetYaw();
 
                     packet.fieldOverlay().setStroke("#3F51B5");
