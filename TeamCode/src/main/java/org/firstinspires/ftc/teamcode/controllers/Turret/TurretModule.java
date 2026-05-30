@@ -80,7 +80,7 @@ public class TurretModule {
 
     public TurretModule(HardwareMap hardwareMap, Telemetry telemetryRC) {
         // 初始化 炮台电机 的硬件，归零朝向
-        turretMotor = hardwareMap.get(DcMotorEx.class, "TurretMotor");
+        turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
         turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         turretMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

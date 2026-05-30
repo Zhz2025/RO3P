@@ -4,12 +4,16 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
+import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.Turret.TurretSubsystem;
 import org.firstinspires.ftc.teamcode.controllers.intake.IntakeController;
@@ -27,7 +31,7 @@ public class RO3P_manual extends LinearOpMode {
     public static int Fly_High = 1800;
     public static int Idle = 0;
 
-    SwerveDrive swerveDrive;
+//    SwerveDrive swerveDrive;
     TurretSubsystem myTurret;
     IntakeController myIntake;
     TriggerController myTrigger;
@@ -35,9 +39,25 @@ public class RO3P_manual extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Robot.refresh(new Localizer() {
+            @Override
+            public void setPose(Pose2d pose) {
+
+            }
+
+            @Override
+            public Pose2d getPose() {
+                return new Pose2d(0,0,0);
+            }
+
+            @Override
+            public PoseVelocity2d update() {
+                return new PoseVelocity2d(new Vector2d(0,0),0);
+            }
+        },hardwareMap.voltageSensor.iterator().next());
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
-        swerveDrive = new SwerveDrive(hardwareMap);
+//        swerveDrive = new SwerveDrive(hardwareMap);
         myTurret = new TurretSubsystem(hardwareMap,telemetry);
         myTurret.toggleAutoAiming();
         myTrigger = new MultipleTriggerController(
@@ -53,15 +73,15 @@ public class RO3P_manual extends LinearOpMode {
 
         myIntake = new IntakeController(hardwareMap);
 
-        swerveDrive.swerveController.setAutoLockHeading(false);
+//        swerveDrive.swerveController.setAutoLockHeading(false);
         waitForStart();
         long currentMillisecond = System.currentTimeMillis();
         while(opModeIsActive()){
             //drivetrain
-            swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
-            if(gamepad1.aWasReleased()) swerveDrive.swerveController.setAutoLockHeading(!swerveDrive.swerveController.getAutoLockHeading());
-            if(gamepad1.bWasReleased()) swerveDrive.swerveController.exchangeNoHeadMode();
-            if(gamepad1.xWasReleased()) swerveDrive.swerveController.resetNoHeadModeStartError();
+//            swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
+//            if(gamepad1.aWasReleased()) swerveDrive.swerveController.setAutoLockHeading(!swerveDrive.swerveController.getAutoLockHeading());
+//            if(gamepad1.bWasReleased()) swerveDrive.swerveController.exchangeNoHeadMode();
+//            if(gamepad1.xWasReleased()) swerveDrive.swerveController.resetNoHeadModeStartError();
 
 
 
@@ -116,19 +136,19 @@ public class RO3P_manual extends LinearOpMode {
     }
     public void telemetry(){
 
-        telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
-        telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
-        telemetry.addData("x,y", Robot.getInstance().getData_Position().getPosition(DistanceUnit.INCH).toString());
-        telemetry.addData("heading", Robot.getInstance().getData_Position().headingRadian);
-        telemetry.addData("targetHeading",swerveDrive.swerveController.getHeadingLockRadian());
+//        telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
+//        telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
+//        telemetry.addData("x,y", Robot.getInstance().getData_Position().getPosition(DistanceUnit.INCH).toString());
+//        telemetry.addData("heading", Robot.getInstance().getData_Position().headingRadian);
+//        telemetry.addData("targetHeading",swerveDrive.swerveController.getHeadingLockRadian());
         telemetry.addLine();
         telemetry.addData("IntakeState",myIntake.getIntakeState());
         telemetry.addData("TriggerState",myTrigger.getTriggerState());
-        telemetry.addLine();
-        for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
-            telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
-            telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
-        }
+//        telemetry.addLine();
+//        for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
+//            telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
+//            telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
+//        }
         telemetry.addData("frame", System.currentTimeMillis() - currentMillisecond);
         currentMillisecond = System.currentTimeMillis();
         telemetry.update();

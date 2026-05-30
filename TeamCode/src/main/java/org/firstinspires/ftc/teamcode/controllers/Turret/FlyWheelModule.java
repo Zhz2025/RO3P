@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.controllers.Turret;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,7 +17,7 @@ public class FlyWheelModule {
     /**
      * 比例系数
      */
-    public static double kP = 1.0;
+    public static double kP = 0.1;
     /**
      * 积分系数
      */
@@ -32,11 +33,11 @@ public class FlyWheelModule {
     /**
      * 静态摩擦系数
      */
-    public static double kS = 0.0;
+    public static double kS = -0.2;
     /**
      * 速度系数
      */
-    public static double kV = 0.0;
+    public static double kV = 0.0055;
     /**
      * 加速度系数
      */
@@ -102,9 +103,9 @@ public class FlyWheelModule {
         this.motorR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         this.motorR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
 
-        this.motorL.setDirection(DcMotorEx.Direction.REVERSE);
+        this.motorL.setDirection(DcMotorEx.Direction.FORWARD);
 
-        this.motorR.setDirection(DcMotorEx.Direction.FORWARD);
+        this.motorR.setDirection(DcMotorEx.Direction.REVERSE);
 
         // 初始化电压输出控制器
         this.voltageOut = new VoltageOut();

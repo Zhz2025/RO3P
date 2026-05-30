@@ -17,7 +17,7 @@ public class IntakeController {
     public static Params PARAMS = new Params();
 
     public IntakeController(HardwareMap hardwareMap){
-        this.intakeMotor=hardwareMap.get(DcMotorEx.class, "intakeMotor");
+        this.intakeMotor=hardwareMap.get(DcMotorEx.class, "intake");
         intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         voltageOut = new VoltageOut();
     }
