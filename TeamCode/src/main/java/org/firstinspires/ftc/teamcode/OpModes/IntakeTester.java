@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.intake.IntakeController;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 import org.firstinspires.ftc.teamcode.controllers.trigger.DoorTriggerController;
 import org.firstinspires.ftc.teamcode.controllers.trigger.MultipleTriggerController;
 import org.firstinspires.ftc.teamcode.controllers.trigger.RotationTriggerController;
@@ -20,6 +25,22 @@ public class IntakeTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
+        Robot.refresh(new Localizer() {
+            @Override
+            public void setPose(Pose2d pose) {
+
+            }
+
+            @Override
+            public Pose2d getPose() {
+                return new Pose2d(0,0,0);
+            }
+
+            @Override
+            public PoseVelocity2d update() {
+                return new PoseVelocity2d(new Vector2d(0,0),0);
+            }
+        },voltageSensor);
         intakeController = new IntakeController(hardwareMap);
         triggerModule = new MultipleTriggerController(
                 new RotationTriggerController(hardwareMap.get(ServoImplEx.class,"pushServo")),
