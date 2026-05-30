@@ -212,7 +212,7 @@ public class ServoCoaxialWheel implements WheelUnit{
             } else {
                 calculatedTargetHeading = new Point2D(targetHeading);
             }
-            motorVelocity = (Point2D.dot(now, targetHeading) / config.wheelDiameter * 2 * config.turntableToWheelTimes + getAngularVelocity()) * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
+            motorVelocity = (Point2D.dot(now, targetHeading) / config.wheelDiameter * 2 * config.turntableToWheelTimes + /*getAngularVelocity()*/0) * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
         } else {
             Point2D now = Point2D.fromPolar(getHeading(), targetSpeed);
             if (Point2D.dot(now, targetHeading) < 0) {
@@ -220,7 +220,7 @@ public class ServoCoaxialWheel implements WheelUnit{
             } else {
                 calculatedTargetHeading = Point2D.fromPolar(getPosition().getRadian(), 1);
             }
-            motorVelocity = getAngularVelocity() * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
+            motorVelocity = /*getAngularVelocity()*/0 * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
         }
         servo.setPosition(0.5 + servoPID.calculate(0, MathSolver.normalizeAngle(calculatedTargetHeading.getRadian() - getHeading()), (System.nanoTime() - lastUpdateTime) / 1e9));
         double pidPower = motorPID.calculate(motorVelocity, motor.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
