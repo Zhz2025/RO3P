@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 
 @Config
 public class TurretModule_Simplified {
+    public static double testSpeed = 0;
     private boolean manualControl = false;
     private DcMotorEx turretMotor;
     private Telemetry myTelemetry;
@@ -52,14 +53,10 @@ public class TurretModule_Simplified {
     private long lastUpdateTime = 0;
 
     //只配置前馈和P项
-    public static double Ks = 0.0;
-    public static double Kv = 0.0;
+    public static double Ks = 1.6273;
+    public static double Kv = 0.0045284997;
     public static double Ka = 0.0;
     public static double velGain = 1;
-    //最大巡航速度，最大加/减速度
-    public static double maxCruiseSpeed = 1000;
-    public static double maxAccel = 200;
-    public static double maxDccel = 200;
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
@@ -181,10 +178,12 @@ public class TurretModule_Simplified {
             dt = (nowTime - lastUpdateTime) / 1000.0;
         }
         lastUpdateTime = nowTime;
-        double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
+        //double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
+        double Velocity = testSpeed;
 
         //叠加车体角速度补偿
-        double finalVelocitySetpoint = Velocity + robotAngularVelocity;
+        //double finalVelocitySetpoint = Velocity + robotAngularVelocity;
+        double finalVelocitySetpoint = Velocity + 0;
         double voltage = velocityController.calculate(finalVelocitySetpoint, currentVelocity, dt, true);
         double power = myVoltageOut.getVoltageOutPower(voltage);
         // 电机执行
