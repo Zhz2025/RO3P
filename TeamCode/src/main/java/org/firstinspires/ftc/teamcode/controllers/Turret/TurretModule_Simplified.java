@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Library.Team4410.MotionProfiler;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDSVAController;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.SlotConfig;
@@ -25,7 +24,7 @@ public class TurretModule_Simplified {
     public static double highLimit = 180;
     // 死区保护
     public static int encoderLimit = 1500;
-    public static double DegreePerTick = 100; // 每度对应的编码器计数，需根据实际电机和齿轮比调整,用于换算tick到实际角度
+    public static double TicksForOneDegree = 2.7377777777777; // 每度对应的编码器计数，用于换算tick到实际角度
 
     private double targetDegree = 0; // 目标朝向，单位为度
     private double currentRobotDegree = 0; // 当前炮台基于机器人的朝向，单位为度
@@ -77,11 +76,11 @@ public class TurretModule_Simplified {
 
     // 编码器tick转角度
     public static double tickToDegree(double tick) {
-        return tick / DegreePerTick;
+        return tick / TicksForOneDegree;
     }
     // 角度转编码器tick
     public static double degreeToTick(double degree) {
-        return degree * DegreePerTick;
+        return degree * TicksForOneDegree;
     }
 
 
