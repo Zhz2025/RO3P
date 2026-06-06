@@ -10,16 +10,12 @@ public class TurretTester extends LinearOpMode {
 
     // 速度环模式下每次调整目标速度的步长 (deg/s)
     private static final double VELOCITY_STEP = 50.0;
-    // 速度环目标速度上限 (deg/s)
-    private static final double MAX_TARGET_VELOCITY = 3000.0;
-
     private enum ControlMode {
         MANUAL,      // 手动直接控制功率
         VELOCITY     // 速度环控制
     }
 
     private ControlMode currentMode = ControlMode.MANUAL;
-    private boolean lastAButton = false; // 用于按钮边沿检测
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,7 +61,7 @@ public class TurretTester extends LinearOpMode {
                     break;
                 }
             }
-
+            telemetry.addData("Degree", turret.getCurrentRobotDegree());
             telemetry.addData("---", "---");
             telemetry.update();
         }

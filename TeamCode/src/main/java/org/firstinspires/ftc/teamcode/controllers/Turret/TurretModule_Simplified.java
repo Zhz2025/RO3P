@@ -23,7 +23,7 @@ public class TurretModule_Simplified {
     public static double lowLimit = -180;
     public static double highLimit = 180;
     // 死区保护
-    public static int encoderLimit = 1500;
+    public static int encoderLimit = 500;
     public static double TicksForOneDegree = 2.7377777777777; // 每度对应的编码器计数，用于换算tick到实际角度
 
     private double targetDegree = 0; // 目标朝向，单位为度
@@ -115,10 +115,16 @@ public class TurretModule_Simplified {
         targetDegree += delta;
     }
 
+    /**
+    ----------------0-360------------
+     */
     public double getCurrentRobotDegree(){
         // 获取当前炮台基于机器人的朝向，单位为度
         return currentRobotDegree;
     }
+    /**
+     ----------------0-360------------???
+     */
     public double getCurrentFieldDegree(double RobotHeading){
         currentFieldDegree = (currentRobotDegree + RobotHeading) % 360;
         // 获取当前炮台基于场地的朝向，单位为度
@@ -140,7 +146,7 @@ public class TurretModule_Simplified {
             throw new RuntimeException("turret is beyond hardware limit. Reset turret and restart.");
         }
         currentRobotDegree = tickToDegree(currentTick);
-
+        currentRobotDegree = (currentRobotDegree % 360 + 360) % 360;
         //最短路径判断与限位
         targetDegree= (targetDegree % 360 + 360) % 360;
         //生成3个候选目标：直接值、+360°、-360°
