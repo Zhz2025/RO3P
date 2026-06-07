@@ -43,13 +43,13 @@ public class Show extends LinearOpMode {
             ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
         }
         if(gamepad2.bWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_FAST);
+            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.CP2_STROBE);
         }
         if(gamepad2.xWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
+            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
         }
         if(gamepad2.yWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
+            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN);
         }
     }
 
