@@ -43,8 +43,8 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.controllers.EnhancedAngleSensor;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Data;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Data_Position;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheel;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheelConfig;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
@@ -97,36 +97,36 @@ public class SwerveDrive {
 
     public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-6.732283,4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-//            3.61*5.23,21.0/54.0,54.0/20.0,3);
-                13.7,32.0/105.0,54.0/20.0,2.5);
+//            3.61*5.23,21.0/54.0,20.0/54.0,3);
+                -13.7,105.0/32.0,20.0/54.0,2.5);
     public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(6.732283,4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            13.7, 32.0/105.0, 54.0/20.0, 2.5);
+            13.7, 105.0/32.0, 20.0/54.0, 2.5);
     public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-6.732283,-4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            -13.7, 32.0/105.0, 54.0/20.0, 2.5);
+            -13.7, 105.0/32.0, 20.0/54.0, 2.5);
     //TODO REVERSEMOTOR
     public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(6.732283,-4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            13.7, 32.0/105.0, 54.0/20.0, 2.5);
+            13.7, 105.0/32.0, 20.0/54.0, 2.5);
     public static ServoCoaxialWheel.Params leftFrontParams = new ServoCoaxialWheel.Params()
             .withSP(0.8).withSI(0).withSD(0)
-            .withMP(0.005).withMI(0).withMD(0.0)
+            .withMP(0*0.005).withMI(0).withMD(0.0)
             .withKS(1.0181325156302465).withKV(0.004443769305569951).withKA(0)
             .withKM(0).withKJ(0);
     public static ServoCoaxialWheel.Params rightFrontParams = new ServoCoaxialWheel.Params()
             .withSP(0.6).withSI(0).withSD(0)
-            .withMP(0.005).withMI(0).withMD(0.0)
+            .withMP(0*0.005).withMI(0).withMD(0.0)
             .withKS(1.2304755843270132).withKV(0.0044144967805881076).withKA(0)
             .withKM(0).withKJ(0);
     public static ServoCoaxialWheel.Params leftBackParams = new ServoCoaxialWheel.Params()
             .withSP(0.8).withSI(0).withSD(0)
-            .withMP(0.005).withMI(0).withMD(0.0)
+            .withMP(0*0.005).withMI(0).withMD(0.0)
             .withKS(0.736480508780421).withKV(0.0046527144341508295).withKA(0)
             .withKM(0).withKJ(0);
     public static ServoCoaxialWheel.Params rightBackParams = new ServoCoaxialWheel.Params()
             .withSP(0.6).withSI(0).withSD(0)
-            .withMP(0.005).withMI(0).withMD(0.0)
+            .withMP(0*0.005).withMI(0).withMD(0.0)
             .withKS(0.639257338764168).withKV(0.0041913862299546335).withKA(0)
             .withKM(0).withKJ(0);
     public SwerveController swerveController;
@@ -154,7 +154,7 @@ public class SwerveDrive {
         swerveController = new SwerveController(
                 this,
                 new DriveLocalizer(initialPose),
-                () -> voltageSensor.getVoltage(),
+                voltageSensor,
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[0]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[0]+"Servo"),
@@ -182,20 +182,20 @@ public class SwerveDrive {
         );
     }
     public SwerveDrive(HardwareMap hardwareMap){
-        this(hardwareMap,Data.getInstance().getPose2d());
+        this(hardwareMap, Data_Position.getInstance().getPose2d());
     }
     public void setDrivePowers(PoseVelocity2d powers) {
         swerveController.gamepadInput(-powers.linearVel.y, powers.linearVel.x, powers.angVel);
     }
     public PoseVelocity2d updatePoseEstimate() {
-        PoseVelocity2d vel = RobotPosition.getInstance().localizer.update();
-        poseHistory.add(RobotPosition.getInstance().getData().getPose2d());
+        PoseVelocity2d vel = Robot.getInstance().localizer.update();
+        poseHistory.add(Robot.getInstance().getData_Position().getPose2d());
 
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
-        estimatedPoseWriter.write(new PoseMessage(RobotPosition.getInstance().getData().getPose2d()));
+        estimatedPoseWriter.write(new PoseMessage(Robot.getInstance().getData_Position().getPose2d()));
 
 
         return vel;
@@ -224,6 +224,7 @@ public class SwerveDrive {
         public final IMU imu;
         public DriveLocalizer(Pose2d initialPose){
             imu = lazyImu.get();
+            imu.resetYaw();
             position = MathSolver.toPoint2D(initialPose);
             startRadian = initialPose.heading.log();
             headingRadian = startRadian;
@@ -232,6 +233,7 @@ public class SwerveDrive {
         @Override
         public void setPose(Pose2d pose) {
             position = MathSolver.toPoint2D(pose);
+            imu.resetYaw();
             startRadian = MathSolver.normalizeAngle(pose.heading.log()-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
             headingRadian = pose.heading.log();
         }
@@ -315,7 +317,7 @@ public class SwerveDrive {
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
             )
-                    .compute(txWorldTarget, RobotPosition.getInstance().getData().getPose2d(), robotVelRobot);
+                    .compute(txWorldTarget, Robot.getInstance().getData_Position().getPose2d(), robotVelRobot);
             //driveCommandWriter.write(new DriveCommandMessage(command));
 
 
@@ -323,11 +325,11 @@ public class SwerveDrive {
 
             swerveController.autoInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
 
-            p.put("x", RobotPosition.getInstance().getData().getPose2d().position.x);
-            p.put("y", RobotPosition.getInstance().getData().getPose2d().position.y);
-            p.put("heading (deg)", Math.toDegrees(RobotPosition.getInstance().getData().getPose2d().heading.toDouble()));
+            p.put("x", Robot.getInstance().getData_Position().getPose2d().position.x);
+            p.put("y", Robot.getInstance().getData_Position().getPose2d().position.y);
+            p.put("heading (deg)", Math.toDegrees(Robot.getInstance().getData_Position().getPose2d().heading.toDouble()));
 
-            Pose2d error = txWorldTarget.value().minusExp(RobotPosition.getInstance().getData().getPose2d());
+            Pose2d error = txWorldTarget.value().minusExp(Robot.getInstance().getData_Position().getPose2d());
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
@@ -340,7 +342,7 @@ public class SwerveDrive {
             Drawing.drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, RobotPosition.getInstance().getData().getPose2d());
+            Drawing.drawRobot(c, Robot.getInstance().getData_Position().getPose2d());
 
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
@@ -400,7 +402,7 @@ public class SwerveDrive {
                     PARAMS.axialGain, PARAMS.lateralGain, PARAMS.headingGain,
                     PARAMS.axialVelGain, PARAMS.lateralVelGain, PARAMS.headingVelGain
             )
-                    .compute(txWorldTarget, RobotPosition.getInstance().getData().getPose2d(), robotVelRobot);
+                    .compute(txWorldTarget, Robot.getInstance().getData_Position().getPose2d(), robotVelRobot);
 
             swerveController.autoInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
 
@@ -411,7 +413,7 @@ public class SwerveDrive {
             Drawing.drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, RobotPosition.getInstance().getData().getPose2d());
+            Drawing.drawRobot(c, Robot.getInstance().getData_Position().getPose2d());
 
             c.setStroke("#7C4DFFFF");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);

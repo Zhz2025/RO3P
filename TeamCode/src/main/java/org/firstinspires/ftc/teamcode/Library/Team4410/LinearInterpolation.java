@@ -9,7 +9,11 @@ package org.firstinspires.ftc.teamcode.Library.Team4410;
  * y = y[i] + t * (y[i+1] - y[i])
  * </pre>
  *
- * <p>Queries outside the provided x-range are clamped to the nearest endpoint.</p>
+ * <p>Queries outside the provided x-range are clamped to the nearest endpoint.
+ * 该线性插值表（LinearInterpolation 类）对于落在给定数据范围外的点，采用“端点钳制”策略（clamping to endpoints）：
+ * 如果查询点 xq 小于等于最小的 x（x[0]），则返回 y[0]。
+ * 如果查询点 xq 大于等于最大的 x（x[n-1]），则返回 y[n-1]。
+ * 即：超出范围的查询不会外推（extrapolate），而是直接返回最近端点的 y 值。</p>
  */
 public final class LinearInterpolation {
     private final double[] x;

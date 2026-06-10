@@ -3,13 +3,18 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 import org.firstinspires.ftc.teamcode.utility.Math.Line;
 import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
@@ -51,7 +56,7 @@ public class MotorSVATuning extends LinearOpMode {
         FINISHED
     }
 
-    State state = State.kS_ASSESSING;
+    State state = State.kS_kV_FITTING;
     List<Point2D> points_kS_kV = new ArrayList<>();
     List<Point2D> points_kA = new ArrayList<>();
     //todo para
@@ -63,15 +68,31 @@ public class MotorSVATuning extends LinearOpMode {
 
     // Configurable parameters
     public static TuningMode tuningMode = TuningMode.MANUAL;
-    public static double KS_VOLTAGE_INCREMENT = 0.001; // Voltage increment for kS assessment
+    public static double KS_VOLTAGE_INCREMENT = 1; // Voltage increment for kS assessment
     public static double KS_VELOCITY_THRESHOLD = 20; // Velocity threshold to determine if motor is moving
     public static int testPoints = 5;
     public static double maxVariance = 1;
     public static double[] kA_TestVoltages = new double[]{1, 2, 3, 4, 5, 6};
-    public static double voltageIncrement = 0.01; // For manual mode
+    public static double voltageIncrement = 1; // For manual mode
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Robot.refresh(new Localizer() {
+            @Override
+            public void setPose(Pose2d pose) {
+
+            }
+
+            @Override
+            public Pose2d getPose() {
+                return new Pose2d(0,0,0);
+            }
+
+            @Override
+            public PoseVelocity2d update() {
+                return new PoseVelocity2d(new Vector2d(0,0), 0);
+            }
+        },hardwareMap.voltageSensor.iterator().next());
         telemetry = InstanceTelemetry.init(telemetry);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -82,11 +103,11 @@ public class MotorSVATuning extends LinearOpMode {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         follower = hardwareMap.get(DcMotorEx.class, "FlyWheelR");
-        follower.setDirection(DcMotorSimple.Direction.REVERSE);
+        follower.setDirection(DcMotorSimple.Direction.FORWARD);
         follower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         follower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         follower.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        voltageOut = new VoltageOut(hardwareMap);
+        voltageOut = new VoltageOut();
 
         // Initialize log file
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);

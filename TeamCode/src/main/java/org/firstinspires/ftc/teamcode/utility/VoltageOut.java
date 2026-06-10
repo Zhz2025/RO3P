@@ -1,21 +1,20 @@
 package org.firstinspires.ftc.teamcode.utility;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
+
 public class VoltageOut {
-    private final VoltageSensor voltageSensor;
     private long lastGetVoltageTime = 0;
     public static long voltageUpdateInterval = 50; // Update voltage every 100 ms
     private double currentVoltage = 0;
-    public VoltageOut(HardwareMap hardwareMap){
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+    public VoltageOut(){
+
     }
     public double getVoltage(){
         long currentTime = System.currentTimeMillis();
         if(currentTime - lastGetVoltageTime > voltageUpdateInterval){
-            currentVoltage = voltageSensor.getVoltage();
+            currentVoltage = Robot.getInstance().getData_Voltage().getVoltage();
             lastGetVoltageTime = currentTime;
         }
         return currentVoltage;

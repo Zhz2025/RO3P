@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.TankDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.TwoDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 
 public final class ManualFeedbackTuner extends LinearOpMode {
     public static double DISTANCE = 64;
@@ -61,11 +61,11 @@ public final class ManualFeedbackTuner extends LinearOpMode {
         } else if (TuningOpModes.DRIVE_CLASS.equals(SwerveDrive.class)) {
             SwerveDrive drive = new SwerveDrive(hardwareMap, new Pose2d(0, 0, 0));
 
-            if (RobotPosition.getInstance().localizer instanceof TwoDeadWheelLocalizer) {
+            if (Robot.getInstance().localizer instanceof TwoDeadWheelLocalizer) {
                 if (TwoDeadWheelLocalizer.PARAMS.perpXTicks == 0 && TwoDeadWheelLocalizer.PARAMS.parYTicks == 0) {
                     throw new RuntimeException("Odometry wheel locations not set! Run AngularRampLogger to tune them.");
                 }
-            } else if (RobotPosition.getInstance().localizer instanceof ThreeDeadWheelLocalizer) {
+            } else if (Robot.getInstance().localizer instanceof ThreeDeadWheelLocalizer) {
                 if (ThreeDeadWheelLocalizer.PARAMS.perpXTicks == 0 && ThreeDeadWheelLocalizer.PARAMS.par0YTicks == 0 && ThreeDeadWheelLocalizer.PARAMS.par1YTicks == 1) {
                     throw new RuntimeException("Odometry wheel locations not set! Run AngularRampLogger to tune them.");
                 }

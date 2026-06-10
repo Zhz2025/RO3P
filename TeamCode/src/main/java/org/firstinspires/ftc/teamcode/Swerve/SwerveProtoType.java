@@ -10,7 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
-import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
+import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheel;
 
 @TeleOp
 public class SwerveProtoType extends LinearOpMode {
@@ -21,6 +22,7 @@ public class SwerveProtoType extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
+        swerveDrive.swerveController.setAutoLockHeading(false);
         waitForStart();
         while(opModeIsActive()){
             swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
@@ -30,16 +32,22 @@ public class SwerveProtoType extends LinearOpMode {
             for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
                 telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
                 telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
+                telemetry.addData(index +"angularVelocity",swerveDrive.swerveController.wheelUnits[index].getAngularVelocity());
+                if(swerveDrive.swerveController.wheelUnits[index] instanceof ServoCoaxialWheel){
+                    ServoCoaxialWheel wheel = (ServoCoaxialWheel) swerveDrive.swerveController.wheelUnits[index];
+                    telemetry.addData(index+"motorVelocity",wheel.motorVelocity);
+                    telemetry.addData(index+"outputVoltage",wheel.outputVoltage);
+                }
             }
             telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
             telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
-            telemetry.addData("x,y", RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
-            telemetry.addData("heading", RobotPosition.getInstance().getData().headingRadian);
+            telemetry.addData("x,y", Robot.getInstance().getData_Position().getPosition(DistanceUnit.INCH).toString());
+            telemetry.addData("heading", Robot.getInstance().getData_Position().headingRadian);
             telemetry.addData("targetHeading",swerveDrive.swerveController.getHeadingLockRadian());
             telemetry.update();
             TelemetryPacket packet = new TelemetryPacket();
             packet.fieldOverlay().setStroke("#3F51B5");
-            Drawing.drawRobot(packet.fieldOverlay(), RobotPosition.getInstance().getData().getPose2d());
+            Drawing.drawRobot(packet.fieldOverlay(), Robot.getInstance().getData_Position().getPose2d());
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
         }
     }

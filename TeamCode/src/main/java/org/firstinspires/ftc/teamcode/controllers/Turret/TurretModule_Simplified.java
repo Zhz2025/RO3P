@@ -4,17 +4,17 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDSVAController;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.SlotConfig;
-import org.firstinspires.ftc.teamcode.Library.Team4410.MotionProfiler;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
-import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 
 @Config
-public class TurretModule {
+public class TurretModule_Simplified {
+    public static double testSpeed = 0;
+    private boolean manualControl = false;
     private DcMotorEx turretMotor;
     private Telemetry myTelemetry;
     private VoltageOut myVoltageOut;
@@ -23,8 +23,8 @@ public class TurretModule {
     public static double lowLimit = -180;
     public static double highLimit = 180;
     // 死区保护
-    public static int encoderLimit = 1500;
-    public static double DegreePerTick = 100; // 每度对应的编码器计数，需根据实际电机和齿轮比调整,用于换算tick到实际角度
+    public static int encoderLimit = 500;
+    public static double TicksForOneDegree = 2.7377777777777; // 每度对应的编码器计数，用于换算tick到实际角度
 
     private double targetDegree = 0; // 目标朝向，单位为度
     private double currentRobotDegree = 0; // 当前炮台基于机器人的朝向，单位为度
@@ -42,8 +42,6 @@ public class TurretModule {
 
     // 速度环PIDSVA控制器
     private PIDSVAController velocityController;
-    // 运动规划器
-    private MotionProfiler motionProfiler;
 
     // 车体角速度补偿
     private double robotAngularVelocity = 0.0; // 单位deg/s，需外部set
@@ -54,14 +52,22 @@ public class TurretModule {
     private long lastUpdateTime = 0;
 
     //只配置前馈和P项
-    public static double Ks = 0.0;
-    public static double Kv = 0.0;
+    public static double Ks = 1.6273;
+    public static double Kv = 0.0045284997;
     public static double Ka = 0.0;
     public static double velGain = 1;
-    //最大巡航速度，最大加/减速度
-    public static double maxCruiseSpeed = 1000;
-    public static double maxAccel = 200;
-    public static double maxDccel = 200;
+    public void toggleControlMode(){
+        manualControl = !manualControl;
+    }
+    public void setManualControl(){
+        manualControl = true;
+    }
+    public void setAutoControl(){
+        manualControl = false;
+    }
+
+
+
 
     // 外部设置车体角速度补偿
     public void setRobotAngularVelocity(double omegaDegPerSec) {
@@ -70,15 +76,15 @@ public class TurretModule {
 
     // 编码器tick转角度
     public static double tickToDegree(double tick) {
-        return tick / DegreePerTick;
+        return tick / TicksForOneDegree;
     }
     // 角度转编码器tick
     public static double degreeToTick(double degree) {
-        return degree * DegreePerTick;
+        return degree * TicksForOneDegree;
     }
 
 
-    public TurretModule(HardwareMap hardwareMap, Telemetry telemetryRC) {
+    public TurretModule_Simplified(HardwareMap hardwareMap, Telemetry telemetryRC) {
         // 初始化 炮台电机 的硬件，归零朝向
         turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
         turretMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -101,8 +107,6 @@ public class TurretModule {
                 .withKA(Ka)
                 .withOutputLimits(-14.0, 14.0);
         velocityController = new PIDSVAController().withSlot0(slot);
-
-        motionProfiler = new MotionProfiler(maxCruiseSpeed, maxAccel, maxDccel);
     }
     public void setTargetDegree(double degree){
         targetDegree = degree;
@@ -111,10 +115,16 @@ public class TurretModule {
         targetDegree += delta;
     }
 
+    /**
+    ----------------0-360------------
+     */
     public double getCurrentRobotDegree(){
         // 获取当前炮台基于机器人的朝向，单位为度
         return currentRobotDegree;
     }
+    /**
+     ----------------0-360------------???
+     */
     public double getCurrentFieldDegree(double RobotHeading){
         currentFieldDegree = (currentRobotDegree + RobotHeading) % 360;
         // 获取当前炮台基于场地的朝向，单位为度
@@ -136,7 +146,7 @@ public class TurretModule {
             throw new RuntimeException("turret is beyond hardware limit. Reset turret and restart.");
         }
         currentRobotDegree = tickToDegree(currentTick);
-
+        currentRobotDegree = (currentRobotDegree % 360 + 360) % 360;
         //最短路径判断与限位
         targetDegree= (targetDegree % 360 + 360) % 360;
         //生成3个候选目标：直接值、+360°、-360°
@@ -163,16 +173,7 @@ public class TurretModule {
         else{
             targetDegree = bestTarget;
         }
-
-        // 运动规划器：路径未开始则需重新初始化
         long nowTime = System.currentTimeMillis();
-        if (motionProfiler.isDone()) {
-            velocityController.reset();
-            profileStartTime = nowTime;
-            motionProfiler.init_new_profile(currentRobotDegree, targetDegree);
-        }
-        double currentTime = (nowTime - profileStartTime) / 1000.0; // 秒
-        double profileVelocity = motionProfiler.motion_profile_vel(currentTime);
 
         //位置环PI控制（用PIDController实现）
         double dt;
@@ -182,14 +183,19 @@ public class TurretModule {
             dt = (nowTime - lastUpdateTime) / 1000.0;
         }
         lastUpdateTime = nowTime;
-        double correctiveVelocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
+        //double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
+        double Velocity = testSpeed;
 
         //叠加车体角速度补偿
-        double finalVelocitySetpoint = profileVelocity + correctiveVelocity + robotAngularVelocity;
+        //double finalVelocitySetpoint = Velocity + robotAngularVelocity;
+        double finalVelocitySetpoint = Velocity + 0;
         double voltage = velocityController.calculate(finalVelocitySetpoint, currentVelocity, dt, true);
         double power = myVoltageOut.getVoltageOutPower(voltage);
         // 电机执行
-        turretMotor.setPower(power);
+        if(!manualControl){
+            turretMotor.setPower(power);
+        }
+
 
         //telemetry
         myTelemetry.addData("voltage", voltage);
@@ -199,7 +205,12 @@ public class TurretModule {
         myTelemetry.addData("currentFieldDegree", currentFieldDegree);
         myTelemetry.addData("currentTick", currentTick);
         myTelemetry.addData("currentVelocity", currentVelocity);
-        myTelemetry.addData("motionProfileIsDone", motionProfiler.isDone());
+    }
+
+    public void setMotorPower(double power){
+        if(manualControl){
+            turretMotor.setPower(power);
+        }
     }
 
 }

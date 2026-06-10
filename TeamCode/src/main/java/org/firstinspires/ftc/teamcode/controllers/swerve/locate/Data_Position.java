@@ -8,8 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utility.Math.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Math.Point2D;
 @Config
-public class Data {
-    private Data(){}
+public class Data_Position {
+    private Data_Position(){}
     @Override
     public String toString(){
         return "Position:\nx:"+getPosition(DistanceUnit.MM).getX()+
@@ -19,8 +19,8 @@ public class Data {
                 "\nSpeed:\nX:"+getSpeed(DistanceUnit.MM).x+
                 "\nY:"+getSpeed(DistanceUnit.MM).y;
     }
-    static Data instance=new Data();
-    public static Data getInstance(){return instance;}
+    static Data_Position instance=new Data_Position();
+    public static Data_Position getInstance(){return instance;}
     private Point2D position=new Point2D(0,0);
     public void setPosition(Point2D positionInch){
         this.position=new Point2D(positionInch);

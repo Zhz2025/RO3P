@@ -16,10 +16,10 @@ public class ClearPosition extends LinearOpMode {
      */
     @Override
     public void runOpMode() throws InterruptedException {
-        Data.instance.setPosition(new Point2D(0, 0));
-        Data.instance.headingRadian = 0;
-        Data.instance.setSpeed(new Vector2d(0, 0));
-        Data.instance.headingSpeedRadianPerSec = 0;
+        Data_Position.instance.setPosition(new Point2D(0, 0));
+        Data_Position.instance.headingRadian = 0;
+        Data_Position.instance.setSpeed(new Vector2d(0, 0));
+        Data_Position.instance.headingSpeedRadianPerSec = 0;
         telemetry.addData("ClearPosition", "Position data cleared");
         telemetry.update();
     }
