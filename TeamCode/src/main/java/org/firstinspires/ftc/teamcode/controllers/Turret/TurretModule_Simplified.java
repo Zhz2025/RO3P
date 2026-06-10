@@ -18,6 +18,7 @@ public class TurretModule_Simplified {
     private DcMotorEx turretMotor;
     private Telemetry myTelemetry;
     private VoltageOut myVoltageOut;
+    private SlotConfig slot;
     //硬件配置
     // 角度限位,单位：° 以机器的头为0°，逆时针为正
     public static double lowLimit = -180;
@@ -98,7 +99,7 @@ public class TurretModule_Simplified {
         targetDegree = 0;
         currentTick = 0;
 
-        SlotConfig slot = new SlotConfig()
+        slot = new SlotConfig()
                 .withKP(velGain)
                 .withKI(0.0)
                 .withKD(0.0)
@@ -131,9 +132,8 @@ public class TurretModule_Simplified {
         return currentFieldDegree;
     }
     public void update(){
-        //重设P SVA
-        SlotConfig slot = new SlotConfig()
-                .withKP(velGain)
+        //重设P SVA *****请注意，不要通过构建新的SlotConfig对象来修改参数，用with()函数修改，否则会把其他参数（如OutputLimits）恢复到默认值
+        slot.withKP(velGain)
                 .withKS(Ks)
                 .withKV(Kv)
                 .withKA(Ka);

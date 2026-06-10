@@ -19,6 +19,22 @@ public class TurretTester extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Robot.refresh(new Localizer() {
+            @Override
+            public void setPose(Pose2d pose) {
+
+            }
+
+            @Override
+            public Pose2d getPose() {
+                return new Pose2d(0,0,0);
+            }
+
+            @Override
+            public PoseVelocity2d update() {
+                return new PoseVelocity2d(new Vector2d(0,0),0);
+            }
+        },hardwareMap.voltageSensor.iterator().next());
         TurretModule_Simplified turret = new TurretModule_Simplified(hardwareMap, telemetry);
         // 默认为手动控制模式
         turret.setManualControl();
