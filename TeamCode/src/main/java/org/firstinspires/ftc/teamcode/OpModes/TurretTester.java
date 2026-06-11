@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule_Simplified;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 
 @TeleOp(name = "Turret Tester", group = "Test")
 public class TurretTester extends LinearOpMode {
@@ -15,10 +23,11 @@ public class TurretTester extends LinearOpMode {
         VELOCITY     // 速度环控制
     }
 
-    private ControlMode currentMode = ControlMode.MANUAL;
+    private ControlMode currentMode = ControlMode.VELOCITY;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Robot.refresh(new Localizer() {
             @Override
             public void setPose(Pose2d pose) {
@@ -36,8 +45,6 @@ public class TurretTester extends LinearOpMode {
             }
         },hardwareMap.voltageSensor.iterator().next());
         TurretModule_Simplified turret = new TurretModule_Simplified(hardwareMap, telemetry);
-        // 默认为手动控制模式
-        turret.setManualControl();
 
         telemetry.addLine("Ready!");
         telemetry.addLine("A: toggle Manual/Velocity mode");

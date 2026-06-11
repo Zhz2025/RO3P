@@ -1,5 +1,19 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
+import org.firstinspires.ftc.teamcode.controllers.LED.BlinkinLedController;
+import org.firstinspires.ftc.teamcode.controllers.LED.ServoLedController;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
+
 @TeleOp(name = "LED Show", group = "Test")
 public class Show extends LinearOpMode {
     private BlinkinLedController ledBelt;
@@ -25,6 +39,7 @@ public class Show extends LinearOpMode {
                 return new PoseVelocity2d(new Vector2d(0,0),0);
             }
         },hardwareMap.voltageSensor.iterator().next());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         led = new ServoLedController(hardwareMap, telemetry);
         ledBelt = new BlinkinLedController(hardwareMap);
         ledBelt.turnOff();

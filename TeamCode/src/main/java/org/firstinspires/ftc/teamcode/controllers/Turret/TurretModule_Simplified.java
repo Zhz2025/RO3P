@@ -56,7 +56,7 @@ public class TurretModule_Simplified {
     public static double Ks = 1.6273;
     public static double Kv = 0.0045284997;
     public static double Ka = 0.0;
-    public static double velGain = 1;
+    public static double velGain = 0;
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
@@ -141,10 +141,10 @@ public class TurretModule_Simplified {
         // 死区保护：读取编码器，超限直接报错
         currentTick = turretMotor.getCurrentPosition();
         currentVelocity = turretMotor.getVelocity(AngleUnit.DEGREES);
-        if (currentTick > encoderLimit || currentTick < -encoderLimit) {
-            //只是为了保险，便于debug，且这不是比赛用程序。如果是为比赛准备，请不要直接抛报错
-            throw new RuntimeException("turret is beyond hardware limit. Reset turret and restart.");
-        }
+//        if (currentTick > encoderLimit || currentTick < -encoderLimit) {
+//            //只是为了保险，便于debug，且这不是比赛用程序。如果是为比赛准备，请不要直接抛报错
+//            throw new RuntimeException("turret is beyond hardware limit. Reset turret and restart.");
+//        }
         currentRobotDegree = tickToDegree(currentTick);
         currentRobotDegree = (currentRobotDegree % 360 + 360) % 360;
         //最短路径判断与限位
