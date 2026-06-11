@@ -25,7 +25,7 @@ public class TurretModule_Simplified {
     public static double highLimit = 180;
     // 死区保护
     public static int encoderLimit = 500;
-    public static double TicksForOneDegree = 2.7377777777777; // 每度对应的编码器计数，用于换算tick到实际角度
+    public static double TicksForOneDegree = 2.43434569; // 每度对应的编码器计数，用于换算tick到实际角度
 
     private double targetDegree = 0; // 目标朝向，单位为度
     private double currentRobotDegree = 0; // 当前炮台基于机器人的朝向，单位为度
