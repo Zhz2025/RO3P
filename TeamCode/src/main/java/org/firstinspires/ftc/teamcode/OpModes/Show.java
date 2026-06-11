@@ -1,12 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.controllers.LED.BlinkinLedController;
-import org.firstinspires.ftc.teamcode.controllers.LED.ServoLedController;
-
 @TeleOp(name = "LED Show", group = "Test")
 public class Show extends LinearOpMode {
     private BlinkinLedController ledBelt;
@@ -16,6 +9,22 @@ public class Show extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        Robot.refresh(new Localizer() {
+            @Override
+            public void setPose(Pose2d pose) {
+
+            }
+
+            @Override
+            public Pose2d getPose() {
+                return new Pose2d(0,0,0);
+            }
+
+            @Override
+            public PoseVelocity2d update() {
+                return new PoseVelocity2d(new Vector2d(0,0),0);
+            }
+        },hardwareMap.voltageSensor.iterator().next());
         led = new ServoLedController(hardwareMap, telemetry);
         ledBelt = new BlinkinLedController(hardwareMap);
         ledBelt.turnOff();
