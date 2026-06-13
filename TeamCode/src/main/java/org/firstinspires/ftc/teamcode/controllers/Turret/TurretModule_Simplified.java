@@ -11,6 +11,12 @@ import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDSVAController;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.SlotConfig;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 
+//为什么要用串级PID
+//串级PID最大的优势在于抗干扰和对参数的适应能力，或者说能容忍硬件变化（如磨损）对参数的改变
+//优势的实现的理论基础是内环的高响应速度，可以在扰动产生的瞬间就做出响应，消除扰动，在扰动传导到最终输出之前，就把它扼杀在了摇篮里
+//同时，串级还可以简化外环控制的对象。单级PID，PID计算的输出是电机的输出功率，这和电机实际产生的速度是非线性的。内环可以把电机简化成一个速度与功率成正比的理想电机，这种职能的划分，减轻了外环的控制压力。
+//在当前的ftc环境中，我们没有执行器端的微处理器，可以在电机上跑速度环，实现更高刷新率。故串级的第一个优势一定程度上失效了
+//但其第二个优势—— 简化外环控制对象 仍然存在。这也方便了我们叠加车体旋转的速度补偿
 @Config
 public class TurretModule_Simplified {
     public static double testSpeed = 0;
@@ -183,12 +189,14 @@ public class TurretModule_Simplified {
             dt = (nowTime - lastUpdateTime) / 1000.0;
         }
         lastUpdateTime = nowTime;
+        //todo
         //double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
         double Velocity = testSpeed;
 
-        //叠加车体角速度补偿
+        //todo 叠加车体角速度补偿
         //double finalVelocitySetpoint = Velocity + robotAngularVelocity;
         double finalVelocitySetpoint = Velocity + 0;
+
         double voltage = velocityController.calculate(finalVelocitySetpoint, currentVelocity, dt, true);
         double power = myVoltageOut.getVoltageOutPower(voltage);
         // 电机执行

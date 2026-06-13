@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Library.Team4410.MotionProfiler;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 import org.firstinspires.ftc.teamcode.utility.PIDSVA.PIDController;
 
+//废弃方案，原本计划通过速度曲线实现更丝滑的运动控制。但实际环境中这样过度理想的模型反而会降低鲁棒性，无法适应机器人上实际发生的复杂变化
 @Config
 public class TurretModule {
     private DcMotorEx turretMotor;

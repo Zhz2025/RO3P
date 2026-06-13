@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -13,13 +14,15 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule_Simplified;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 
+@Config
 @TeleOp(name = "Turret Tester", group = "Test")
 public class TurretTester extends LinearOpMode {
 
     // 速度环模式下每次调整目标速度的步长 (deg/s)
     private static final double VELOCITY_STEP = 50.0;
+    public static double degree = 0;
     private enum ControlMode {
-        MANUAL,      // 手动直接控制功率
+        DEGREE,      // 手动直接控制功率
         VELOCITY     // 速度环控制
     }
 
@@ -56,22 +59,22 @@ public class TurretTester extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepad1.aWasPressed()) {
                 // 切换模式
-                if (currentMode == ControlMode.MANUAL) {
+                if (currentMode == ControlMode.DEGREE) {
                     currentMode = ControlMode.VELOCITY;
                     turret.setAutoControl();
                 } else {
-                    currentMode = ControlMode.MANUAL;
+                    currentMode = ControlMode.DEGREE;
                     turret.setManualControl();
                 }
             }
 
             // ---- 根据模式处理输入 ----
             switch (currentMode) {
-                case MANUAL: {
-                    double power = gamepad1.right_stick_x;
-                    turret.setMotorPower(power);
-                    telemetry.addData("Mode", "MANUAL (Power)");
-                    telemetry.addData("Turret Power", "%.3f", power);
+                case DEGREE: {
+                    turret.setTargetDegree(degree);
+                    turret.update();
+                    telemetry.addData("Mode", "DEGREE");
+                    telemetry.addData("Turret Power", "%.3f", degree);
                     break;
                 }
                 case VELOCITY: {
