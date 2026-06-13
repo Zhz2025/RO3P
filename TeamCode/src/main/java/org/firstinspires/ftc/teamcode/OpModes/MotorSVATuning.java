@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
@@ -35,9 +36,9 @@ import android.os.Environment;
 @TeleOp(name = "Motor SVA Tuning")
 public class MotorSVATuning extends LinearOpMode {
     private DcMotorEx motor;
-    private DcMotorEx follower;
-    private FileWriter fileWriter;
-    private String logFileName;
+//    private DcMotorEx follower;
+    //private FileWriter fileWriter;
+    //private String logFileName;
     private VoltageOut voltageOut;
     private boolean lastA = false;
 
@@ -96,30 +97,30 @@ public class MotorSVATuning extends LinearOpMode {
         telemetry = InstanceTelemetry.init(telemetry);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        motor = hardwareMap.get(DcMotorEx.class, "FlyWheelL");
+        motor = hardwareMap.get(DcMotorEx.class, "turret");
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        follower = hardwareMap.get(DcMotorEx.class, "FlyWheelR");
-        follower.setDirection(DcMotorSimple.Direction.FORWARD);
-        follower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        follower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        follower.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        follower = hardwareMap.get(DcMotorEx.class, "FlyWheelR");
+//        follower.setDirection(DcMotorSimple.Direction.FORWARD);
+//        follower.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        follower.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        follower.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         voltageOut = new VoltageOut();
 
         // Initialize log file
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
-        logFileName = Environment.getExternalStorageDirectory().getPath() + "/" + sdf.format(new Date()) + "_MotorSVA.csv";
-        try {
-            fileWriter = new FileWriter(logFileName);
-            fileWriter.write("Time,OutputVoltage,Velocity\n");
-        } catch (IOException e) {
-            telemetry.addData("Error", "Failed to create log file: " + e.getMessage());
-            telemetry.update();
-            return;
-        }
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
+//        logFileName = Environment.getExternalStorageDirectory().getPath() + "/" + sdf.format(new Date()) + "_MotorSVA.csv";
+//        try {
+//            fileWriter = new FileWriter(logFileName);
+//            fileWriter.write("Time,OutputVoltage,Velocity\n");
+//        } catch (IOException e) {
+//            telemetry.addData("Error", "Failed to create log file: " + e.getMessage());
+//            telemetry.update();
+//            return;
+//        }
 
         while (opModeInInit()) {
             telemetry.addLine("Tuning Mode: " + tuningMode);
@@ -141,7 +142,7 @@ public class MotorSVATuning extends LinearOpMode {
         List<Double> accelerations = new ArrayList<>();
 
         while (opModeIsActive()) {
-            double velocity = motor.getVelocity(); // Assuming getVelocity() returns TPS or similar
+            double velocity = motor.getVelocity(AngleUnit.DEGREES); // Assuming getVelocity() returns TPS or similar
             long nowTime = System.nanoTime();
             double deltaTime = (nowTime - lastTime) / 1e9;
             double acceleration = (velocity - lastVelocity) / deltaTime;
@@ -232,7 +233,7 @@ public class MotorSVATuning extends LinearOpMode {
                     break;
             }
             motor.setPower(voltageOut.getVoltageOutPower(outputVoltage));
-            follower.setPower(voltageOut.getVoltageOutPower(outputVoltage));
+//            follower.setPower(voltageOut.getVoltageOutPower(outputVoltage));
             // Telemetry
             telemetry.addData("State", state);
             telemetry.addData("Output Voltage", outputVoltage);
@@ -242,24 +243,22 @@ public class MotorSVATuning extends LinearOpMode {
             telemetry.addData("kA", kA);
             telemetry.update();
 
-            // Log to file
-            try {
-                fileWriter.write(System.currentTimeMillis() + "," + outputVoltage + "," + velocity + "\n");
-            } catch (IOException e) {
-                telemetry.addData("Log Error", e.getMessage());
-            }
+//            // Log to file
+//            try {
+//                fileWriter.write(System.currentTimeMillis() + "," + outputVoltage + "," + velocity + "\n");
+//            } catch (IOException e) {
+//                telemetry.addData("Log Error", e.getMessage());
+//            }
 
             sleep(10); // Small delay
         }
 
-        // Close file
-        try {
-            fileWriter.close();
-        } catch (IOException e) {
-            telemetry.addData("Close Error", e.getMessage());
-        }
+//        // Close file
+//        try {
+//            fileWriter.close();
+//        } catch (IOException e) {
+//            telemetry.addData("Close Error", e.getMessage());
+//        }
     }
 }
-
-// Note: Point2D class assumed to be available from utility package
 

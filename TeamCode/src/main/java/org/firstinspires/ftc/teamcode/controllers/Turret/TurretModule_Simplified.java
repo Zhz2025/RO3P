@@ -53,10 +53,10 @@ public class TurretModule_Simplified {
     private long lastUpdateTime = 0;
 
     //只配置前馈和P项
-    public static double Ks = 1.6273;
-    public static double Kv = 0.0045284997;
+    public static double Ks = 1.41;
+    public static double Kv = 0.0073;
     public static double Ka = 0.0;
-    public static double velGain = 0;
+    public static double velGain = 0.05;
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
