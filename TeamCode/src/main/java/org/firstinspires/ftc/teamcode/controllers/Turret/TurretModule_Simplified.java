@@ -56,7 +56,9 @@ public class TurretModule_Simplified {
     public static double Ks = 1.41;
     public static double Kv = 0.0073;
     public static double Ka = 0.0;
-    public static double velGain = 0.05;
+    public static double vel_P = 0.05;
+    public static double vel_I = 0;
+    public static double vel_D = 0;
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
@@ -100,9 +102,9 @@ public class TurretModule_Simplified {
         currentTick = 0;
 
         slot = new SlotConfig()
-                .withKP(velGain)
-                .withKI(0.0)
-                .withKD(0.0)
+                .withKP(vel_P)
+                .withKI(vel_I)
+                .withKD(vel_D)
                 .withKS(Ks)
                 .withKV(Kv)
                 .withKA(Ka)
@@ -133,10 +135,8 @@ public class TurretModule_Simplified {
     }
     public void update(){
         //重设P SVA *****请注意，不要通过构建新的SlotConfig对象来修改参数，用with()函数修改，否则会把其他参数（如OutputLimits）恢复到默认值
-        slot.withKP(velGain)
-                .withKS(Ks)
-                .withKV(Kv)
-                .withKA(Ka);
+        slot.withKP(vel_P).withKI(vel_I).withKD(vel_D)
+                .withKS(Ks).withKV(Kv).withKA(Ka);
         velocityController.resetSlot(slot);
         // 死区保护：读取编码器，超限直接报错
         currentTick = turretMotor.getCurrentPosition();
