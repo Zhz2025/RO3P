@@ -54,8 +54,8 @@ public class ServoLedController {
      * @param hardwareMap 硬件映射
      * @param telemetry   遥测对象（可为null）
      */
-    public ServoLedController(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.ledServo = hardwareMap.get(ServoImplEx.class, "ledBulb");
+    public ServoLedController(HardwareMap hardwareMap, Telemetry telemetry, String name) {
+        this.ledServo = hardwareMap.get(ServoImplEx.class, name);
         this.telemetry = telemetry;
 
         // 启用连续PWM模式（获得更高PWM频率，减少LED闪烁）
