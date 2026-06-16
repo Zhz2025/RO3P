@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.LED;
+package org.firstinspires.ftc.teamcode.controllers.led;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;

@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
-import org.firstinspires.ftc.teamcode.controllers.LED.BlinkinLedController;
-import org.firstinspires.ftc.teamcode.controllers.LED.ServoLedController;
+import org.firstinspires.ftc.teamcode.controllers.led.BlinkinLedController;
+import org.firstinspires.ftc.teamcode.controllers.led.ServoLedController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 
 @TeleOp(name = "LED Show", group = "Test")
@@ -67,16 +67,16 @@ public class Show extends LinearOpMode {
 
     private void setledBelt() {
         if(gamepad2.aWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
+            ledBelt.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
         }
         if(gamepad2.bWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.CP2_STROBE);
+            ledBelt.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_STROBE);
         }
         if(gamepad2.xWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+            ledBelt.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
         }
         if(gamepad2.yWasPressed()){
-            ledBelt.setColor(RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN);
+            ledBelt.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_GREEN);
         }
     }
 

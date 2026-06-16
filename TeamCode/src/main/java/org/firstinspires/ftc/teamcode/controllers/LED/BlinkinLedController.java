@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers.LED;
+package org.firstinspires.ftc.teamcode.controllers.led;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,80 +7,61 @@ public class BlinkinLedController {
 
 
     private RevBlinkinLedDriver blinkinLedDriver;
-    private LedPreset currentPreset;
+    private RevBlinkinLedDriver.BlinkinPattern currentPattern;
 
     public BlinkinLedController(HardwareMap hardwareMap) {
         this.blinkinLedDriver  = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        this.currentPreset = LedPreset.BLACK;
-        blinkinLedDriver.setPattern(currentPreset.getPattern());
+        this.currentPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        blinkinLedDriver.setPattern(currentPattern);
     }
 
 
 
     public void showRedTeam() {
-        setPreset(LedPreset.RED);
+        setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
     }
 
     public void showBlueTeam() {
-        setPreset(LedPreset.BLUE);
+        setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
     }
 
     public void showReady() {
-        setPreset(LedPreset.GREEN);
+        setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
     }
 
     public void showError() {
-        setPreset(LedPreset.HEARTBEAT_RED);
+        setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
     }
 
-    /**
-     * Compatibility method: set pattern using the raw RevBlinkinLedDriver.BlinkinPattern.
-     * Also attempts to update the currentPreset if a matching LedPreset exists.
-     */
-    public void setColor(RevBlinkinLedDriver.BlinkinPattern COLOR) {
-        blinkinLedDriver.setPattern(COLOR);
-        // try to map back to a LedPreset when possible
-        for (LedPreset p : LedPreset.values()) {
-            if (p.getPattern() == COLOR) {
-                currentPreset = p;
-                return;
-            }
-        }
-        // if no mapping found, clear currentPreset
-        currentPreset = null;
-    }
 
     /**
      * Set by enum preset
      */
-    public void setPreset(LedPreset preset) {
-        this.currentPreset = preset;
-        blinkinLedDriver.setPattern(preset.getPattern());
+    public void setPattern(RevBlinkinLedDriver.BlinkinPattern preset) {
+        this.currentPattern = preset;
+        blinkinLedDriver.setPattern(preset);
     }
 
-    public void setNextPreset(){
-        if (currentPreset != null) {
-            currentPreset = currentPreset.next();
-            blinkinLedDriver.setPattern(currentPreset.getPattern());
+    public void setNextPattern(){
+        if (currentPattern != null) {
+            currentPattern = currentPattern.next();
+            blinkinLedDriver.setPattern(currentPattern);
         }
     }
-    public void setPreviousPreset(){
-        if (currentPreset != null) {
-            currentPreset = currentPreset.previous();
-            blinkinLedDriver.setPattern(currentPreset.getPattern());
+    public void setPreviousPattern(){
+        if (currentPattern != null) {
+            currentPattern = currentPattern.previous();
+            blinkinLedDriver.setPattern(currentPattern);
         }
-    }
-
-    public LedPreset getCurrentPreset() {
-        return currentPreset;
     }
 
     public RevBlinkinLedDriver.BlinkinPattern getCurrentPattern() {
-        return currentPreset == null ? RevBlinkinLedDriver.BlinkinPattern.BLACK : currentPreset.getPattern();
+        return currentPattern;
     }
 
+
     public void turnOff() {
-        setPreset(LedPreset.BLACK);
+        setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
     }
     /*
     固定颜色：RED BLUE GREEN YELLOW ORANGE WHITE BLACK  // 关闭
