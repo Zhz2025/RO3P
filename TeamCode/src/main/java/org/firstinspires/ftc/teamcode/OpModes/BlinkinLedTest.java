@@ -11,11 +11,17 @@ public class BlinkinLedTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         blinkinLedController = new BlinkinLedController(hardwareMap);
-        if(gamepad1.aWasReleased()){
-            blinkinLedController.setNextPattern();
-        }else if(gamepad1.bWasReleased()){
-            blinkinLedController.setPreviousPattern();
+        waitForStart();
+        while(opModeIsActive()) {
+            if (gamepad1.aWasReleased()) {
+                blinkinLedController.setNextPattern();
+            } else if (gamepad1.bWasReleased()) {
+                blinkinLedController.setPreviousPattern();
+            }
+            telemetry.addData("CurrentPreset", blinkinLedController.getCurrentPattern().toString());
+            telemetry.addData("CurrentLength",blinkinLedController.getCurrentLength());
+            telemetry.addData("CurrentIndex",blinkinLedController.getCurrentPattern().ordinal());
+            telemetry.update();
         }
-        telemetry.addData("CurrentPreset",blinkinLedController.getCurrentPattern().toString());
     }
 }

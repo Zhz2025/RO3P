@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class BlinkinLedController {
 
 
-    private RevBlinkinLedDriver blinkinLedDriver;
+    public RevBlinkinLedDriver blinkinLedDriver;
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
 
     public BlinkinLedController(HardwareMap hardwareMap) {
@@ -59,6 +59,16 @@ public class BlinkinLedController {
         return currentPattern;
     }
 
+    /**
+     * Returns the PWM pulse width in microseconds for the current pattern.
+     * Range: 1105 μs (RAINBOW_RAINBOW_PALETTE) to 2095 μs (BLACK), step 10 μs.
+     */
+    public int getCurrentLength() {
+        if (currentPattern == null) {
+            return 0;
+        }
+        return 1105 + currentPattern.ordinal() * 10;
+    }
 
     public void turnOff() {
         setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
