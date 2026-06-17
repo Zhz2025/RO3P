@@ -67,7 +67,7 @@ public class BlinkinLedController {
         if (currentPattern == null) {
             return 0;
         }
-        return 1105 + currentPattern.ordinal() * 10;
+        return 1005 + currentPattern.ordinal() * 10;
     }
 
     public void turnOff() {
