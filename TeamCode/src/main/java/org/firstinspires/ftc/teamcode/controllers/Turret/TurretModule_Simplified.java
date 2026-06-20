@@ -21,14 +21,15 @@ import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 public class TurretModule_Simplified {
     public static double testSpeed = 0;
     private boolean manualControl = false;
+    private boolean velTestMode = false;
     private DcMotorEx turretMotor;
     private Telemetry myTelemetry;
     private VoltageOut myVoltageOut;
     private SlotConfig slot;
     //硬件配置
-    // 角度限位,单位：° 以机器的头为0°，逆时针为正
-    public static double lowLimit = 0;
-    public static double highLimit = 360;
+    // 角度限位,单位：° 以炮台初始位置为0°，逆时针为正，可旋转范围 ±180°
+    public static double lowLimit = -180;
+    public static double highLimit = 180;
     // 死区保护
     public static int encoderLimit = 500;
     public static double TicksForOneDegree = 2.43434569; // 每度对应的编码器计数，用于换算tick到实际角度
@@ -76,6 +77,9 @@ public class TurretModule_Simplified {
     public void setAutoControl(){
         manualControl = false;
     }
+    public void toggleVelTestMode(boolean mode){
+        velTestMode = mode;
+    }
 
 
 
@@ -92,6 +96,15 @@ public class TurretModule_Simplified {
     // 角度转编码器tick
     public static double degreeToTick(double degree) {
         return degree * TicksForOneDegree;
+    }
+
+    // 将任意角度映射到有效连续区间 [lowLimit, highLimit) 内的唯一表示
+    // 因为区间恰好是一整圈（360°），每个角度在此区间内只有一种合法位置
+    private double mapToValidRange(double angle) {
+        double result = angle;
+        while (result < lowLimit) result += 360;
+        while (result >= highLimit) result -= 360;
+        return result;
     }
 
 
@@ -127,22 +140,22 @@ public class TurretModule_Simplified {
     }
 
     /**
-    ----------------0-360------------
+     ----------------[-180, 180)------------
+     获取当前炮台基于机器人的朝向，单位为度
      */
     public double getCurrentRobotDegree(){
-        // 获取当前炮台基于机器人的朝向，单位为度
         return currentRobotDegree;
     }
     /**
-     ----------------0-360------------???
+     ----------------[-180, 180)------------
+     获取当前炮台基于场地的朝向，单位为度
      */
     public double getCurrentFieldDegree(double RobotHeading){
         currentFieldDegree = (currentRobotDegree + RobotHeading) % 360;
-        // 获取当前炮台基于场地的朝向，单位为度
         return currentFieldDegree;
     }
     public void update(){
-        //重设P SVA *****请注意，不要通过构建新的SlotConfig对象来修改参数，用with()函数修改，否则会把其他参数（如OutputLimits）恢复到默认值
+        //重设PID SVA参数 *****请注意，不要通过构建新的SlotConfig对象来修改参数，用with()函数修改，否则会把其他参数（如OutputLimits）恢复到默认值
         slot.withKP(vel_P).withKI(vel_I).withKD(vel_D)
                 .withKS(Ks).withKV(Kv).withKA(Ka);
         velocityController.resetSlot(slot);
@@ -154,47 +167,33 @@ public class TurretModule_Simplified {
 //            //只是为了保险，便于debug，且这不是比赛用程序。如果是为比赛准备，请不要直接抛报错
 //            throw new RuntimeException("turret is beyond hardware limit. Reset turret and restart.");
 //        }
+
         currentRobotDegree = tickToDegree(currentTick);
-        currentRobotDegree = (currentRobotDegree % 360 + 360) % 360;
-        //最短路径判断与限位
-        targetDegree= (targetDegree % 360 + 360) % 360;
-        //生成3个候选目标：直接值、+360°、-360°
-        double[] candidates = {targetDegree, targetDegree + 360.0, targetDegree - 360.0};
+        // 确保当前位置在有效范围内
+        currentRobotDegree = mapToValidRange(currentRobotDegree);
 
-        //在所有不超限的候选中，选择离当前位置最近的那个
-        double bestTarget = 0;
-        double minDistance = Double.MAX_VALUE;
+        // 目标映射到唯一合法连续位置——因为有效范围恰好 360°，
+        // 每个角度在此区间内只有一种合法表示，不存在"选哪条路"的歧义
+        targetDegree = mapToValidRange(targetDegree);
 
-        for (double candidate : candidates) {
-            double normalizedCandidate = (candidate % 360 + 360) % 360;
-            if (normalizedCandidate >= lowLimit && normalizedCandidate <= highLimit){
-                double distance = Math.abs(candidate - currentRobotDegree);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    bestTarget = candidate;
-                }
-            }
-        }
-        if(minDistance == Double.MAX_VALUE){
-            //同上
-            throw new RuntimeException("illegal target");
-        }
-        else{
-            targetDegree = bestTarget;
-        }
         long nowTime = System.currentTimeMillis();
 
-        //位置环PI控制（用PIDController实现）
+
         double dt;
         if (lastUpdateTime == 0) {
-            dt = 0.05; // 首次调用假定50ms
+            dt = 0.05;
         } else {
             dt = (nowTime - lastUpdateTime) / 1000.0;
         }
         lastUpdateTime = nowTime;
-        //todo
-        double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
-        //double Velocity = testSpeed;
+        double Velocity = 0;
+
+        if(!velTestMode){
+            Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
+        }
+        else{
+            Velocity = testSpeed;
+        }
 
         //todo 叠加车体角速度补偿
         //double finalVelocitySetpoint = Velocity + robotAngularVelocity;
@@ -202,7 +201,8 @@ public class TurretModule_Simplified {
 
         double voltage = velocityController.calculate(finalVelocitySetpoint, currentVelocity, dt, true);
         double power = myVoltageOut.getVoltageOutPower(voltage);
-        if(Math.abs(power) < Min_Power)
+        //todo 重复/过小输出约束
+        //if(Math.abs(power) < Min_Power)
         // 电机执行
         if(!manualControl){
             turretMotor.setPower(power);
@@ -214,7 +214,7 @@ public class TurretModule_Simplified {
         myTelemetry.addData("power", power);
         myTelemetry.addData("targetDegree", targetDegree);
         myTelemetry.addData("currentRobotDegree", currentRobotDegree);
-//        myTelemetry.addData("currentFieldDegree", currentFieldDegree);
+        myTelemetry.addData("currentFieldDegree", currentFieldDegree);
         myTelemetry.addData("currentTick", currentTick);
         myTelemetry.addData("currentVelocity", currentVelocity);
         myTelemetry.addData("targetVelocity", finalVelocitySetpoint);

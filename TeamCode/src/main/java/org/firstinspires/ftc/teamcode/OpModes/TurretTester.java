@@ -17,9 +17,6 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 @Config
 @TeleOp(name = "Turret Tester", group = "Test")
 public class TurretTester extends LinearOpMode {
-
-    // 速度环模式下每次调整目标速度的步长 (deg/s)
-    private static final double VELOCITY_STEP = 50.0;
     public static double degree = 0;
     private enum ControlMode {
         POWER,
@@ -62,18 +59,20 @@ public class TurretTester extends LinearOpMode {
                 // 切换模式
                 if (currentMode == ControlMode.DEGREE) {
                     currentMode = ControlMode.VELOCITY;
-                    turret.setAutoControl();
+                    turret.toggleVelTestMode(true);
                 } else {
                     currentMode = ControlMode.DEGREE;
-                    turret.setManualControl();
+                    turret.toggleVelTestMode(false);
                 }
             }
             if(gamepad1.bWasPressed()){
                 if(currentMode != ControlMode.POWER){
                     currentMode = ControlMode.POWER;
+                    turret.setManualControl();
                 }
                 else{
                     currentMode = ControlMode.DEGREE;
+                    turret.setAutoControl();
                 }
             }
 
@@ -95,11 +94,8 @@ public class TurretTester extends LinearOpMode {
                 }
                 case VELOCITY: {
                     turret.setAutoControl();
-                    // 右摇杆X轴控制目标速度增量
-                    double deltaV = gamepad1.right_stick_x * VELOCITY_STEP;
                     // 调用 update() 执行速度环控制
                     turret.update();
-
                     telemetry.addData("Mode", "VELOCITY (Speed Loop)");
                     break;
                 }
