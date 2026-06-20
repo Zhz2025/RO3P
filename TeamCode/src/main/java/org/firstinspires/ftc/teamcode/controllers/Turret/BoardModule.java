@@ -30,6 +30,10 @@ public class BoardModule {
     public void setLowPosition() {
         targetPosition = Low_Position;
     }
+    public void setPosition(double position){
+        targetPosition = position;
+    }
+
     public void update(){
         servoL.setPosition(targetPosition);
         servoR.setPosition(targetPosition);

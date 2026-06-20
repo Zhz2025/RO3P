@@ -24,7 +24,7 @@ public class TurretSubsystem {
         static double SwitchDistance = 101.808; //切换挡板高/低状态的阈值，单位inch
         static double[] Dis = {0,200}; //inch
         static double[] Speed = {0,2000}; //tick/s
-        static double ManualPower = 1; // 手动控制炮台的功率
+        static double ManualPower = 0.4; // 手动控制炮台的功率
     }
 
     int manualTargetpeed = 0;
@@ -172,6 +172,10 @@ public class TurretSubsystem {
     public void manualBoardLow() {
         boardModule.setLowPosition();
     }
+    public void setBoardPosition(double position){
+        boardModule.setPosition(position);
+    }
+
 
     // 手动控制：炮台正转
     public void manualTurretForward() {

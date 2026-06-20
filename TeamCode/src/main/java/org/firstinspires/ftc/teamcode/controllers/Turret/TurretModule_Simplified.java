@@ -27,8 +27,8 @@ public class TurretModule_Simplified {
     private SlotConfig slot;
     //硬件配置
     // 角度限位,单位：° 以机器的头为0°，逆时针为正
-    public static double lowLimit = -180;
-    public static double highLimit = 180;
+    public static double lowLimit = 0;
+    public static double highLimit = 360;
     // 死区保护
     public static int encoderLimit = 500;
     public static double TicksForOneDegree = 2.43434569; // 每度对应的编码器计数，用于换算tick到实际角度
@@ -41,7 +41,7 @@ public class TurretModule_Simplified {
 
 
     // 控制参数
-    public static double positionKp = 0.02; // 位置环P
+    public static double positionKp = 5; // 位置环P
     public static double positionKi = 0.0;  // 位置环I
     public static double positionMaxi = 50;//单位：°/s
     public static double postionIzone = 10;//单位：°
@@ -62,9 +62,11 @@ public class TurretModule_Simplified {
     public static double Ks = 1.41;
     public static double Kv = 0.0073;
     public static double Ka = 0.0;
-    public static double vel_P = 0.05;
+    public static double vel_P = 0.03;
     public static double vel_I = 0;
     public static double vel_D = 0;
+    public static double Min_Vel = 10;
+    public static double Min_Power = 0.1;
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
@@ -144,6 +146,7 @@ public class TurretModule_Simplified {
         slot.withKP(vel_P).withKI(vel_I).withKD(vel_D)
                 .withKS(Ks).withKV(Kv).withKA(Ka);
         velocityController.resetSlot(slot);
+        positionController.setPID(positionKp, positionKi, 0);
         // 死区保护：读取编码器，超限直接报错
         currentTick = turretMotor.getCurrentPosition();
         currentVelocity = turretMotor.getVelocity(AngleUnit.DEGREES);
@@ -163,8 +166,8 @@ public class TurretModule_Simplified {
         double minDistance = Double.MAX_VALUE;
 
         for (double candidate : candidates) {
-            // 检查是否在软限位内
-            if (candidate >= lowLimit && candidate <= highLimit) {
+            double normalizedCandidate = (candidate % 360 + 360) % 360;
+            if (normalizedCandidate >= lowLimit && normalizedCandidate <= highLimit){
                 double distance = Math.abs(candidate - currentRobotDegree);
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -190,8 +193,8 @@ public class TurretModule_Simplified {
         }
         lastUpdateTime = nowTime;
         //todo
-        //double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
-        double Velocity = testSpeed;
+        double Velocity = positionController.calculate(targetDegree, currentRobotDegree, dt);
+        //double Velocity = testSpeed;
 
         //todo 叠加车体角速度补偿
         //double finalVelocitySetpoint = Velocity + robotAngularVelocity;
@@ -199,6 +202,7 @@ public class TurretModule_Simplified {
 
         double voltage = velocityController.calculate(finalVelocitySetpoint, currentVelocity, dt, true);
         double power = myVoltageOut.getVoltageOutPower(voltage);
+        if(Math.abs(power) < Min_Power)
         // 电机执行
         if(!manualControl){
             turretMotor.setPower(power);
@@ -210,9 +214,10 @@ public class TurretModule_Simplified {
         myTelemetry.addData("power", power);
         myTelemetry.addData("targetDegree", targetDegree);
         myTelemetry.addData("currentRobotDegree", currentRobotDegree);
-        myTelemetry.addData("currentFieldDegree", currentFieldDegree);
+//        myTelemetry.addData("currentFieldDegree", currentFieldDegree);
         myTelemetry.addData("currentTick", currentTick);
         myTelemetry.addData("currentVelocity", currentVelocity);
+        myTelemetry.addData("targetVelocity", finalVelocitySetpoint);
     }
 
     public void setMotorPower(double power){

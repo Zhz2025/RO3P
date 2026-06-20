@@ -22,11 +22,12 @@ public class TurretTester extends LinearOpMode {
     private static final double VELOCITY_STEP = 50.0;
     public static double degree = 0;
     private enum ControlMode {
+        POWER,
         DEGREE,      // 手动直接控制功率
         VELOCITY     // 速度环控制
     }
 
-    private ControlMode currentMode = ControlMode.VELOCITY;
+    private ControlMode currentMode = ControlMode.DEGREE;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,17 +68,33 @@ public class TurretTester extends LinearOpMode {
                     turret.setManualControl();
                 }
             }
+            if(gamepad1.bWasPressed()){
+                if(currentMode != ControlMode.POWER){
+                    currentMode = ControlMode.POWER;
+                }
+                else{
+                    currentMode = ControlMode.DEGREE;
+                }
+            }
 
             // ---- 根据模式处理输入 ----
             switch (currentMode) {
+                case POWER:
+                    turret.setManualControl();
+                    turret.setMotorPower(gamepad1.left_stick_x);
+                    telemetry.addData("Mode", "POWER");
+                    telemetry.addData("POWER", "%.3f", gamepad1.left_stick_x);
+                    break;
                 case DEGREE: {
+                    turret.setAutoControl();
                     turret.setTargetDegree(degree);
                     turret.update();
                     telemetry.addData("Mode", "DEGREE");
-                    telemetry.addData("Turret Power", "%.3f", degree);
+                    telemetry.addData("TargetDegree", "%.3f", degree);
                     break;
                 }
                 case VELOCITY: {
+                    turret.setAutoControl();
                     // 右摇杆X轴控制目标速度增量
                     double deltaV = gamepad1.right_stick_x * VELOCITY_STEP;
                     // 调用 update() 执行速度环控制
