@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.controllers.led;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,6 +14,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * - setPwmEnable()启用连续PWM模式，获得更高频率减少闪烁
  * - setPosition(0.0~1.0) 映射为不同的PWM占空比
  * - scaleRange()可自定义PWM脉冲宽度范围
+ *
+ * 有两种使用方法
+ * 1：直接将舵机5V和GND连接LED正负极，此时只需要调用turnOn和turnOff方法，不需要update。只能控制LED开和关，不能调亮度。
+ * 2：5V供电口和GND依旧连接LED正负极，但回路中串联一个三极管/mos管。以三极管为例，舵机的信号端口（白线）连接三极管控制引脚，从而通过PWM信号调节亮度，发挥全部功能。
  */
 @Config
 public class ServoLedController {
@@ -32,6 +38,7 @@ public class ServoLedController {
     private double targetBrightness = 0.0;       // 目标亮度
     private LedEffect currentEffect = LedEffect.SOLID;
     private boolean enabled = true;
+    private double currentSetPoint = 0.0;
 
     // 平滑过渡参数
     private double fadeSpeed = 2.0;              // 淡入淡出速度（每秒变化量）
@@ -55,11 +62,13 @@ public class ServoLedController {
      * @param telemetry   遥测对象（可为null）
      */
     public ServoLedController(HardwareMap hardwareMap, Telemetry telemetry, String name) {
-        this.ledServo = hardwareMap.get(ServoImplEx.class, name);
+        Servo servo = hardwareMap.get(Servo.class, name);
+        this.ledServo = (ServoImplEx)servo;
         this.telemetry = telemetry;
 
         // 启用连续PWM模式（获得更高PWM频率，减少LED闪烁）
         ledServo.setPwmEnable();
+        ledServo.setPwmRange(new PwmControl.PwmRange(0,19999));
 
         this.lastUpdateTime = System.nanoTime();
         setBrightness(0.0);
@@ -145,9 +154,15 @@ public class ServoLedController {
 
     /**
      * 打开LED（恢复之前的目标亮度）
+     *
      */
     public void turnOn() {
         this.enabled = true;
+        ledServo.setPwmEnable();
+        //发送一个指令，让端口上电。否则即使setPwmEnable()，相应舵机端口也不会上电。
+        //TODO 如果使用PWM模式，下面这一行应该删去，只在update中发送指令
+        ledServo.setPosition(1.0);
+
         if (currentEffect == LedEffect.SOLID) {
             fadeTo(targetBrightness > 0 ? targetBrightness : 1.0);
         }
@@ -158,6 +173,7 @@ public class ServoLedController {
      */
     public void turnOff() {
         this.enabled = false;
+        ledServo.setPwmDisable();
         setBrightness(0.0);
     }
 
@@ -210,7 +226,7 @@ public class ServoLedController {
         if (dt <= 0) dt = 0.001;
 
         if (!enabled) {
-            applyBrightness(0.0);
+            ledServo.setPwmDisable();
             addTelemetry();
             return;
         }
@@ -280,7 +296,13 @@ public class ServoLedController {
     private void applyBrightness(double brightness) {
         // Servo.setPosition() 设置PWM脉宽：0.0→最小脉宽，1.0→最大脉宽
         // 对于LED控制，亮度越高→脉宽越大→LED越亮
-        ledServo.setPosition(clamp(brightness, 0.0, 1.0));
+        double targetSetPoint = clamp(brightness, 0.0, 1.0);
+        //只在设定值有变化的情况下向舵机发送命令，节约资源（未经测试）
+        //TODO 测试
+        if(targetSetPoint != currentSetPoint){
+            ledServo.setPosition(targetSetPoint);
+            currentSetPoint = targetSetPoint;
+        }
     }
 
     // ==================== 遥测 ====================

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
-import org.firstinspires.ftc.teamcode.controllers.led.BlinkinLedController;
+import org.firstinspires.ftc.teamcode.controllers.led .BlinkinLedController;
 import org.firstinspires.ftc.teamcode.controllers.led.ServoLedController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 
