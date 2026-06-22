@@ -42,7 +42,7 @@ public class TurretModule_Simplified {
 
 
     // 控制参数
-    public static double positionKp = 5; // 位置环P
+    public static double positionKp = 20  ; // 位置环P
     public static double positionKi = 0.0;  // 位置环I
     public static double positionMaxi = 50;//单位：°/s
     public static double postionIzone = 10;//单位：°
@@ -67,7 +67,7 @@ public class TurretModule_Simplified {
     public static double vel_I = 0;
     public static double vel_D = 0;
     public static double Min_Vel = 10;
-    public static double Min_Power = 0.1;
+    public static double Min_Power = 0.15;
     public void toggleControlMode(){
         manualControl = !manualControl;
     }
@@ -175,6 +175,10 @@ public class TurretModule_Simplified {
         // 目标映射到唯一合法连续位置——因为有效范围恰好 360°，
         // 每个角度在此区间内只有一种合法表示，不存在"选哪条路"的歧义
         targetDegree = mapToValidRange(targetDegree);
+        //180会有bug，特殊处理一下
+        if(Math.abs(targetDegree - 180) < 0.01 || Math.abs(targetDegree + 180) < 0.01){
+            targetDegree = 179.99;
+        }
 
         long nowTime = System.currentTimeMillis();
 
@@ -202,7 +206,9 @@ public class TurretModule_Simplified {
         double voltage = velocityController.calculate(finalVelocitySetpoint, currentVelocity, dt, true);
         double power = myVoltageOut.getVoltageOutPower(voltage);
         //todo 重复/过小输出约束
-        //if(Math.abs(power) < Min_Power)
+        if(Math.abs(power) < Min_Power){
+            power = 0;
+        }
         // 电机执行
         if(!manualControl){
             turretMotor.setPower(power);
