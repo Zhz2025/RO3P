@@ -43,7 +43,7 @@ public class TurretModule_Simplified {
 
     // 控制参数
     public static double positionKp = 20  ; // 位置环P
-    public static double positionKi = 0.0;  // 位置环I
+    public static double positionKi = 5.0;  // 位置环I
     public static double positionMaxi = 50;//单位：°/s
     public static double postionIzone = 10;//单位：°
     private PIDController positionController = new PIDController(positionKp, positionKi, 0, positionMaxi, postionIzone);
