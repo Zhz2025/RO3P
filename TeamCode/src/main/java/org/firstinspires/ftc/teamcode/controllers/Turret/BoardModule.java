@@ -13,7 +13,8 @@ public class BoardModule {
     private Telemetry myTelemetry;
     private double targetPosition = 0;
     public static double High_Position = 0.5;
-    public static double Low_Position = 0.0;
+    public static double Low_Position = 0.1;
+    public static double offset = 0.7;
 
     public BoardModule(HardwareMap hardwareMap, Telemetry telemetryRC){
         servoL = hardwareMap.get(Servo.class,"BoardServoL");
@@ -36,7 +37,7 @@ public class BoardModule {
 
     public void update(){
         servoL.setPosition(targetPosition);
-        servoR.setPosition(targetPosition);
+        servoR.setPosition(targetPosition * offset);
         myTelemetry.addData("Board Position", targetPosition);
     }
 }

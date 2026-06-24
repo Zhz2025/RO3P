@@ -174,7 +174,7 @@ public class ServoLedController {
     public void turnOff() {
         this.enabled = false;
         ledServo.setPwmDisable();
-        setBrightness(0.0);
+//        setBrightness(0.0);
     }
 
     /**
