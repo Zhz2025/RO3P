@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.Turret.BoardModule;
 import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule;
+import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule_Simplified;
 import org.firstinspires.ftc.teamcode.controllers.led.I2CLedController;
 import org.firstinspires.ftc.teamcode.controllers.led.ServoLedController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
@@ -20,10 +21,10 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 @Config
 @TeleOp
 public class LightShow_meow extends LinearOpMode {
-    TurretModule myTurret;
+    TurretModule_Simplified myTurret;
     BoardModule myBoard;
-    private ServoLedController led;
-    private ServoLedController led2;
+//    private ServoLedController led;
+//    private ServoLedController led2;
 
     I2CLedController ledController;
     @Override
@@ -46,14 +47,14 @@ public class LightShow_meow extends LinearOpMode {
         },hardwareMap.voltageSensor.iterator().next());
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        led = new ServoLedController(hardwareMap, telemetry, "ledBulb");
-        led2 = new ServoLedController(hardwareMap, telemetry, "ledBulb2");
+//        led = new ServoLedController(hardwareMap, telemetry, "ledBulb");
+//        led2 = new ServoLedController(hardwareMap, telemetry, "ledBulb2");
         ledController = hardwareMap.get(I2CLedController.class,"ledMusicController");
-        led.turnOff();
-        led2.turnOff();
+//        led.turnOff();
+//        led2.turnOff();
 
         myBoard = new BoardModule(hardwareMap, telemetry);
-        myTurret = new TurretModule(hardwareMap, telemetry);
+        myTurret = new TurretModule_Simplified(hardwareMap, telemetry);
 
         waitForStart();
 
@@ -62,8 +63,6 @@ public class LightShow_meow extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            myTurret.update();
-            myBoard.update();
 
             // === 线性插值表测试：基于系统运行时间打印预期的 t, degree, height ===
             double elapsedSeconds = (System.nanoTime() - startNanoTime) / 1e9;
@@ -78,6 +77,17 @@ public class LightShow_meow extends LinearOpMode {
             telemetry.addData("CurrentMusicMode", ledController.getCurrentMusicMode().toString());
             telemetry.addData("MusicEnabled",ledController.isMusicEnabled());
 
+            myTurret.setTargetDegree(interpolatedDegree);
+            myBoard.setPosition(interpolatedHeight);
+            myTurret.update();
+            myBoard.update();
+
+//            if(elapsedSeconds > 10){
+//                led .turnOn();
+//            }
+//            if(elapsedSeconds > 20){
+//                led2.turnOn();
+//            }
             telemetry.addData("LightShow", "Meow!");
             telemetry.update();
         }
