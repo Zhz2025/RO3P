@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
-import org.firstinspires.ftc.teamcode.controllers.Turret.BoardModule;
-import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule;
+import org.firstinspires.ftc.teamcode.controllers.Turret.HoodModule;
 import org.firstinspires.ftc.teamcode.controllers.Turret.TurretModule_Simplified;
 import org.firstinspires.ftc.teamcode.controllers.led.I2CLedController;
 import org.firstinspires.ftc.teamcode.controllers.led.ServoLedController;
@@ -22,9 +21,9 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Robot;
 @TeleOp
 public class LightShow_meow extends LinearOpMode {
     TurretModule_Simplified myTurret;
-    BoardModule myBoard;
-//    private ServoLedController led;
-//    private ServoLedController led2;
+    HoodModule myHood;
+    private ServoLedController led;
+    private ServoLedController led2;
 
     I2CLedController ledController;
     @Override
@@ -53,7 +52,7 @@ public class LightShow_meow extends LinearOpMode {
 //        led.turnOff();
 //        led2.turnOff();
 
-        myBoard = new BoardModule(hardwareMap, telemetry);
+        myHood = new HoodModule(hardwareMap, telemetry);
         myTurret = new TurretModule_Simplified(hardwareMap, telemetry);
 
         waitForStart();
@@ -78,9 +77,9 @@ public class LightShow_meow extends LinearOpMode {
             telemetry.addData("MusicEnabled",ledController.isMusicEnabled());
 
             myTurret.setTargetDegree(interpolatedDegree);
-            myBoard.setPosition(interpolatedHeight);
+            myHood.setPosition(interpolatedHeight);
             myTurret.update();
-            myBoard.update();
+            myHood.update();
 
 //            if(elapsedSeconds > 10){
 //                led .turnOn();

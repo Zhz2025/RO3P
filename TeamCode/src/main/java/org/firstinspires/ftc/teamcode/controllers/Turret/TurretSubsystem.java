@@ -5,7 +5,6 @@ import android.util.Size;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
@@ -43,7 +42,7 @@ public class TurretSubsystem {
     private Telemetry myTelemetry;
     public TurretModule_Simplified turretModule;
     public FlyWheelModule flyWheelModule;
-    public BoardModule boardModule;
+    public HoodModule hoodModule;
     private boolean HighBoard = true;
     
     private BooleanSupplier BoardUp;
@@ -75,7 +74,7 @@ public class TurretSubsystem {
         myTelemetry = telemetryRC;
         turretModule = new TurretModule_Simplified(hardwareMap,telemetryRC);
         flyWheelModule = new FlyWheelModule(hardwareMap,telemetryRC);
-        boardModule = new BoardModule(hardwareMap,telemetryRC);
+        hoodModule = new HoodModule(hardwareMap,telemetryRC);
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
@@ -130,10 +129,10 @@ public class TurretSubsystem {
             flyWheelModule.setTargetSpeed((int)disToSpeed.interpolate(currentDistanceToGoal));
             turretModule.setTargetDegreeDelta(currentBearingToGoal);
             if(currentDistanceToGoal > Params.SwitchDistance){
-                boardModule.setLowPosition();
+                hoodModule.setLowPosition();
             }
             else{
-                boardModule.setLowPosition();
+                hoodModule.setLowPosition();
             }
         }
         else{
@@ -158,22 +157,22 @@ public class TurretSubsystem {
 
         turretModule.update();
         flyWheelModule.update();
-        boardModule.update();
+        hoodModule.update();
         myTelemetry.addData("Manual?", UsingAutoAiming);
         myTelemetry.addData("TurretTurnRightSupplier", TurretTurnRight.getAsBoolean());
     }
 
     // 手动控制：挡板高位
     public void manualBoardHigh() {
-        boardModule.setHighPosition();
+        hoodModule.setHighPosition();
     }
 
     // 手动控制：挡板低位
     public void manualBoardLow() {
-        boardModule.setLowPosition();
+        hoodModule.setLowPosition();
     }
     public void setBoardPosition(double position){
-        boardModule.setPosition(position);
+        hoodModule.setPosition(position);
     }
 
 
